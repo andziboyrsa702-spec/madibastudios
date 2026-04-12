@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Madiba Studios | Premium Student Grooming</title>
+  <!-- Google Fonts - Premium Typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Chart.js for Admin Dashboard -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- FullCalendar -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <!-- EmailJS -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #000000; color: #FFFFFF; scroll-behavior: smooth; overflow-x: hidden; }
+    
+    .serif-text { font-family: 'Cormorant Garamond', serif; }
+    .sans-text { font-family: 'Inter', sans-serif; }
+    
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #111; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+    
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 40px; }
+    @media (max-width: 768px) { .container { padding: 0 24px; } }
+    @media (max-width: 480px) { .container { padding: 0 16px; } }
+    
+    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 24px 48px; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap; gap: 16px; }
+    @media (max-width: 1024px) { .navbar { padding: 18px 32px; } }
+    @media (max-width: 768px) { .navbar { flex-direction: column; padding: 16px 20px; } }
+    .logo h2 { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.3px; background: linear-gradient(135deg, #FFFFFF, #A0A0A0); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: 'Cormorant Garamond', serif; }
+    .nav-links { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; justify-content: center; }
+    @media (max-width: 768px) { .nav-links { gap: 16px; } }
+    .nav-links a { text-decoration: none; color: #EAEAEA; font-weight: 500; font-size: 0.85rem; letter-spacing: 0.5px; transition: 0.2s; cursor: pointer; text-transform: uppercase; }
+    .nav-links a:hover { color: #FFFFFF; opacity: 0.8; }
+    .btn-outline { border: 1.5px solid #FFFFFF; background: transparent; padding: 8px 20px; border-radius: 100px; font-weight: 600; cursor: pointer; transition: all 0.2s; color: white; font-size: 0.8rem; }
+    .btn-primary { background: #FFFFFF; border: none; padding: 10px 28px; border-radius: 100px; font-weight: 700; color: #000000; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+    .btn-primary:hover, .btn-outline:hover { transform: translateY(-2px); background: #E0E0E0; color: black; }
+    .btn-danger { background: #dc2626; border: none; padding: 6px 16px; border-radius: 100px; font-weight: 600; cursor: pointer; color: white; font-size: 0.75rem; }
+    .hero { padding: 120px 0 140px; text-align: center; background: radial-gradient(circle at 30% 20%, #0A0A0A, #000000); }
+    @media (max-width: 768px) { .hero { padding: 80px 0 100px; } }
+    .hero h1 { font-size: 5rem; font-weight: 700; letter-spacing: -2px; background: linear-gradient(145deg, #FFFFFF, #8E8E8E); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: 'Cormorant Garamond', serif; }
+    @media (max-width: 768px) { .hero h1 { font-size: 2.8rem; } }
+    .hero p { font-size: 1.1rem; margin: 24px auto; max-width: 650px; color: #CCCCCC; line-height: 1.6; }
+    .stats-grid { display: flex; justify-content: center; gap: 40px; margin-top: 60px; flex-wrap: wrap; }
+    .stat-card { background: #0F0F0F; padding: 24px 40px; border-radius: 48px; border: 1px solid #222; text-align: center; }
+    .stat-card h3 { font-size: 2.2rem; font-weight: 700; color: #FFFFFF; font-family: 'Cormorant Garamond', serif; }
+    section { padding: 100px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    @media (max-width: 768px) { section { padding: 60px 0; } }
+    .section-title { font-size: 3rem; font-weight: 600; margin-bottom: 48px; background: linear-gradient(135deg, #FFFFFF, #AAAAAA); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: 'Cormorant Garamond', serif; letter-spacing: -0.5px; }
+    @media (max-width: 768px) { .section-title { font-size: 2rem; } }
+    .premium-text { font-family: 'Inter', sans-serif; line-height: 1.7; font-size: 1rem; color: #E0E0E0; }
+    .premium-text strong { color: #FFFFFF; font-weight: 600; font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; }
+    .services-grid, .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+    @media (max-width: 640px) { .services-grid, .product-grid { grid-template-columns: 1fr; } }
+    .service-card, .product-card { background: #0B0B0B; border-radius: 28px; overflow: hidden; transition: all 0.3s; border: 1px solid #1E1E1E; cursor: pointer; }
+    .service-card:hover, .product-card:hover { transform: translateY(-6px); border-color: #FFFFFF30; }
+    .service-img, .product-img { width: 100%; height: 220px; object-fit: cover; background: #1a1a1a; }
+    .service-info, .product-info { padding: 20px; }
+    .price { font-weight: 700; font-size: 1.5rem; color: #FFFFFF; margin: 8px 0; font-family: 'Cormorant Garamond', serif; }
+    .booking-form { background: #0A0A0A; padding: 35px; border-radius: 40px; border: 1px solid #222; }
+    @media (max-width: 768px) { .booking-form { padding: 24px; } }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
+    input, select { width: 100%; padding: 14px 18px; border-radius: 100px; border: 1px solid #2A2A2A; background: #111; color: white; font-size: 0.9rem; }
+    .dashboard-card, .membership-tier { background: #0B0B0B; border-radius: 28px; padding: 24px; border: 1px solid #222; text-align: center; }
+    .membership-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 25px; margin-top: 20px; }
+    @media (max-width: 768px) { .membership-grid { grid-template-columns: 1fr; } }
+    .admin-only { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000000; z-index: 3000; overflow-y: auto; padding: 20px; }
+    .admin-panel { background: #0A0A0A; border-radius: 32px; padding: 30px; max-width: 1400px; margin: 20px auto; border: 1px solid #FFFFFF20; }
+    .admin-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 30px; }
+    @media (max-width: 768px) { .admin-stats { grid-template-columns: repeat(2,1fr); } }
+    .admin-stat-card { background: #111; padding: 16px; border-radius: 20px; text-align: center; border-left: 3px solid #FFFFFF; }
+    .admin-stat-card h3 { font-size: 1.6rem; color: #FFFFFF; font-family: 'Cormorant Garamond', serif; }
+    .bookings-table { width: 100%; overflow-x: auto; }
+    .bookings-table table { width: 100%; border-collapse: collapse; min-width: 600px; }
+    .bookings-table th, .bookings-table td { padding: 12px; text-align: left; border-bottom: 1px solid #222; font-size: 0.85rem; }
+    .notification { position: fixed; bottom: 20px; right: 20px; background: #1A1A1A; border-left: 4px solid white; padding: 14px 22px; border-radius: 20px; z-index: 2000; animation: fadeInUp 0.3s ease; font-size: 0.85rem; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .badge { background: #1A1A1A; padding: 4px 12px; border-radius: 100px; font-size: 0.7rem; }
+    footer { text-align: center; padding: 40px; color: #6C6C6C; background: #020202; font-size: 0.8rem; }
+    i { margin-right: 6px; }
+    .close-admin { position: absolute; top: 20px; right: 25px; font-size: 26px; cursor: pointer; background: none; border: none; color: white; }
+    .auth-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); z-index: 4000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+    .auth-card { background: #0A0A0A; border-radius: 40px; padding: 40px; width: 450px; max-width: 90%; border: 1px solid #333; }
+    .user-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
+    .profile-dropdown { position: relative; display: inline-block; }
+    .dropdown-content { display: none; position: absolute; right: 0; top: 45px; background: #1A1A1A; min-width: 200px; border-radius: 20px; border: 1px solid #333; z-index: 100; overflow: hidden; }
+    .dropdown-content a { color: white; padding: 12px 16px; text-decoration: none; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s; font-size: 0.85rem; }
+    .dropdown-content a:hover { background: #333; }
+    .profile-trigger { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .login-prompt { background: #1a1a1a; padding: 20px; border-radius: 28px; text-align: center; margin-bottom: 20px; }
+    .booking-history-item { background: #111; margin: 10px 0; padding: 14px; border-radius: 20px; border-left: 4px solid #FFFFFF; font-size: 0.85rem; }
+    .cart-item { background: #111; padding: 12px; border-radius: 20px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+    .calendar-section { transition: all 0.3s ease; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo"><h2>MADIBA STUDIOS</h2></div>
+  <div class="nav-links">
+    <a onclick="scrollToSection('hero')">HOME</a>
+    <a onclick="scrollToSection('about')">STUDIO</a>
+    <a onclick="scrollToSection('story')">LEGACY</a>
+    <a onclick="scrollToSection('services')">CUTS</a>
+    <a onclick="scrollToSection('products')">MERCH</a>
+    <button id="cartBtn" class="btn-outline"><i class="fas fa-shopping-cart"></i> CART (<span id="cartCount">0</span>)</button>
+    <button id="adminNavBtn" class="btn-outline"><i class="fas fa-shield-alt"></i> ADMIN</button>
+    <div id="authSection" style="display: flex; gap: 12px; align-items: center;">
+      <button id="showLoginBtn" class="btn-outline"><i class="fas fa-sign-in-alt"></i> LOGIN</button>
+      <button id="showSignupBtn" class="btn-primary"><i class="fas fa-user-plus"></i> SIGN UP</button>
+      <div id="userInfo" style="display: none;" class="profile-dropdown">
+        <div class="profile-trigger" id="profileTrigger">
+          <img id="userAvatar" class="user-avatar" src="" alt="">
+          <span id="userName"></span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="dropdown-content" id="dropdownContent">
+          <a id="accountSettingsBtn"><i class="fas fa-cog"></i> Account Settings</a>
+          <a id="changeEmailBtn"><i class="fas fa-envelope"></i> Change Email</a>
+          <a id="resetPasswordBtn"><i class="fas fa-key"></i> Reset Password</a>
+          <a id="logoutBtnDropdown"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Auth Modal -->
+<div id="authModal" class="auth-modal" style="display: none;">
+  <div class="auth-card"><div style="display: flex; justify-content: flex-end;"><button id="closeAuthModal" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button></div>
+    <h2 id="authTitle">Login</h2>
+    <input type="email" id="authEmail" placeholder="Email address" style="width:100%;">
+    <input type="password" id="authPassword" placeholder="Password" style="width:100%;">
+    <div style="text-align: right; margin-bottom: 15px;"><a id="forgotPasswordLink" style="color: #aaa; font-size: 0.75rem; cursor: pointer;">Forgot Password?</a></div>
+    <div id="authError" style="color: #ff6666; font-size: 0.75rem; margin-bottom: 15px;"></div>
+    <button id="authSubmitBtn" class="btn-primary" style="width:100%;"><i class="fas fa-sign-in-alt"></i> Login</button>
+    <button id="googleAuthBtn" class="btn-primary" style="width:100%; margin-top: 12px; background: #4285F4;"><i class="fab fa-google"></i> Sign in with Google</button>
+    <div class="auth-switch" id="authSwitch" style="text-align: center; margin-top: 20px; color: #aaa; cursor: pointer;">Don't have an account? <span style="color: white; text-decoration: underline;">Sign Up</span></div>
+  </div>
+</div>
+
+<!-- Password Reset Modal -->
+<div id="resetModal" class="auth-modal" style="display: none;">
+  <div class="auth-card"><div style="display: flex; justify-content: flex-end;"><button id="closeResetModal" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button></div>
+    <h2>Reset Password</h2>
+    <input type="email" id="resetEmail" placeholder="Enter your email address" style="width:100%;">
+    <div id="resetError" style="color: #ff6666; font-size: 0.75rem; margin-bottom: 15px;"></div>
+    <div id="resetSuccess" style="color: #66ff66; font-size: 0.75rem; margin-bottom: 15px; display: none;"></div>
+    <button id="sendResetBtn" class="btn-primary" style="width:100%;"><i class="fas fa-paper-plane"></i> Send Reset Email</button>
+  </div>
+</div>
+
+<!-- Change Email Modal -->
+<div id="changeEmailModal" class="auth-modal" style="display: none;">
+  <div class="auth-card"><div style="display: flex; justify-content: flex-end;"><button id="closeChangeEmailModal" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button></div>
+    <h2>Change Email Address</h2>
+    <input type="email" id="newEmail" placeholder="New Email Address" style="width:100%;">
+    <input type="password" id="currentPasswordForEmail" placeholder="Current Password" style="width:100%;">
+    <div id="changeEmailError" style="color: #ff6666; font-size: 0.75rem; margin-bottom: 15px;"></div>
+    <button id="confirmChangeEmailBtn" class="btn-primary" style="width:100%;"><i class="fas fa-save"></i> Update Email</button>
+  </div>
+</div>
+
+<!-- Admin Login Modal -->
+<div id="adminLoginModal" class="auth-modal" style="display: none;">
+  <div class="auth-card"><div style="display: flex; justify-content: flex-end;"><button id="closeAdminLoginModal" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button></div>
+    <h2>Administrator Access</h2>
+    <input type="email" id="adminEmail" placeholder="Admin Email" style="width:100%;" value="admin@madibastudios.co.za">
+    <input type="password" id="adminPassword" placeholder="Password" style="width:100%;">
+    <div id="adminLoginError" style="color: #ff6666; font-size: 0.75rem; margin-bottom: 15px;"></div>
+    <button id="submitAdminLogin" class="btn-primary" style="width:100%;"><i class="fas fa-sign-in-alt"></i> Login as Admin</button>
+  </div>
+</div>
+
+<main>
+  <section id="hero" class="hero">
+    <div class="container">
+      <h1>ANYTIME, ANYPLACE</h1>
+      <p>Premium student grooming platform designed for convenience, consistency, and culture. Built for campus life, tailored for modern schedules.</p>
+      <div style="display:flex; gap:15px; justify-content:center; margin:35px 0; flex-wrap: wrap;">
+        <button class="btn-primary" onclick="scrollToSection('booking')"><i class="fas fa-calendar-check"></i> BOOK NOW</button>
+        <button class="btn-outline" onclick="scrollToSection('products')"><i class="fas fa-shopping-bag"></i> SHOP MERCH</button>
+      </div>
+      <div class="stats-grid" id="liveStats">
+        <div class="stat-card"><h3 id="statBookings">0</h3><p>Total Bookings</p></div>
+        <div class="stat-card"><h3 id="statUsers">0</h3><p>Active Clients</p></div>
+        <div class="stat-card"><h3 id="statBarbers">3</h3><p>Master Barbers</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about"><div class="container"><h2 class="section-title">The Studio</h2><div style="background:#0A0A0A; border-radius:28px; padding:40px;" class="premium-text"><p><strong>Founded at UCT</strong> — Madiba Studios is a student-built brand redefining grooming culture on campus. Founded by Motheo Mbulawa, it has grown into a trusted service for students across UCT, CPUT, and UWC.</p><br/><p><strong>Convenience & Quality</strong> — We understand the student lifestyle: tight schedules, limited time. That is why we bring grooming directly to you. Mobile services, on-campus presence, no long queues.</p><br/><p><strong>Hygiene & Professionalism</strong> — Sanitized tools, clean equipment, branded uniforms. Every detail designed to give you confidence.</p><br/><p><strong>Our Vision</strong> — To become South Africa's leading student grooming brand, expanding across campuses and setting the standard for quality, convenience, and culture. This is not just grooming. This is legacy.</p></div></div></section>
+
+  <section id="story"><div class="container"><h2 class="section-title">Legacy & Vision</h2><div style="background:#050505; border-radius:40px; padding:40px;" class="premium-text"><p><strong>The Beginning</strong> — Madiba Studios was founded with purpose, resilience, and vision. What began as a student-led initiative at the University of Cape Town has grown into one of the most recognized student-focused grooming brands in the Southern Suburbs of Cape Town.</p><br/><p><strong>Family & Responsibility</strong> — The business was inspired by supporting family and building something meaningful that could create stability, opportunity, and long-term impact.</p><br/><p><strong>Growth & Recognition</strong> — Starting as a mobile service, we brought convenience directly to students. Over the past three years, we have maintained an exceptionally high standard of service, with over 90% of customer experiences being positive. As a finalist in The Pitch UCT 2025, Madiba Studios has been recognised for its innovation, impact, and scalability.</p><br/><p><strong>Today</strong> — Madiba Studios stands as a structured, evolving brand — combining quality service, strong branding, and a clear growth strategy.<br/><br/>— Motheo Mbulawa, Founder & CEO</p></div></div></section>
+
+  <section id="services"><div class="container"><h2 class="section-title">Signature Cuts</h2><div class="services-grid" id="servicesList"></div></div></section>
+  <section id="products"><div class="container"><h2 class="section-title">Madiba Merch</h2><div class="product-grid" id="productList"></div></div></section>
+  <section id="membership"><div class="container"><h2 class="section-title">Membership Tiers</h2><div class="membership-grid"><div class="membership-tier"><h3>Silver</h3><p>0–2 bookings</p><span class="badge">Entry Tier</span></div><div class="membership-tier"><h3>Gold</h3><p>3–5 bookings</p><span class="badge">Loyal Member</span></div><div class="membership-tier"><h3>Platinum</h3><p>6+ bookings</p><span class="badge">Elite Status</span></div></div></div></section>
+
+  <div id="cartModal" style="display:none; position:fixed; top:0; right:0; width:380px; height:100%; background:#0A0A0A; z-index:2000; border-left:1px solid #333; padding:20px; overflow-y:auto;"><div style="display:flex; justify-content:space-between;"><h3>Your Cart</h3><button id="closeCart" style="background:none; border:none; color:white; font-size:22px;">&times;</button></div><div id="cartItems"></div><hr style="margin:15px 0;"><p><strong>Total: R<span id="cartTotal">0</span></strong></p><button id="checkoutBtn" class="btn-primary" style="width:100%; margin-top:15px;">Proceed to Booking</button></div>
+
+  <section id="booking">
+    <div class="container">
+      <h2 class="section-title">Select Date & Complete Booking</h2>
+      <div id="loginPrompt" class="login-prompt" style="display: none;"><p>Please Login or Sign Up to book an appointment.</p><button id="promptLoginBtn" class="btn-primary" style="margin-top: 12px;">Login / Sign Up</button></div>
+      <div id="bookingFormContainer" style="display: none;">
+        <div class="booking-form">
+          <!-- Calendar ONLY appears when booking a haircut service -->
+          <div id="calendarContainer" style="margin-bottom: 25px; display: none;"><div id="fullYearCalendar" style="background:#111; border-radius:20px; padding:12px;"></div></div>
+          <form id="checkoutForm">
+            <div class="form-row"><input type="text" id="fullName" placeholder="Full name" required><input type="email" id="email" placeholder="Email address" readonly style="background:#1a1a1a;"></div>
+            <div class="form-row"><input type="text" id="location" placeholder="Campus (UCT/CPUT/UWC)" required><input type="text" id="roomNumber" placeholder="Room number (mandatory)" required></div>
+            <div class="form-row"><select id="studentStatus"><option value="Yes">Student: Yes</option><option value="No">Student: No</option></select><select id="serviceSelect"></select></div>
+            <div class="form-row"><select id="barberSelect"><option value="Motheo">Motheo</option><option value="Lwazi">Lwazi</option><option value="Aphiwe">Aphiwe</option></select><input type="text" id="selectedDate" placeholder="Select a date from calendar" readonly required></div>
+            <div class="form-row"><select id="timeSlot" required><option value="">Select time</option></select></div>
+            <button type="submit" class="btn-primary" style="width:100%">Confirm Booking (R<span id="totalAmountSpan">0</span>)</button>
+          </form>
+          <div id="bookingMsg" style="margin-top:15px; text-align:center;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="dashboard"><div class="container"><h2 class="section-title">Client Portal</h2><div id="clientDashboard" class="dashboard-card"><p style="color:#777;">Login to view your dashboard.</p></div></div></section>
+  <section id="payment"><div class="container"><h2 class="section-title">Secure Payment</h2><div style="background:#0A0A0A; border-radius:40px; padding:35px;"><p>EFT: Madiba Studios, FNB, Acc: 62840951234, Branch: 250655</p><p style="margin-top:12px;">PayFast / Stripe integration coming soon.</p></div></div></section>
+</main>
+
+<div id="adminDashboard" class="admin-only">
+  <div class="admin-panel"><button id="closeAdmin" class="close-admin">&times;</button>
+    <h2>Administrator Dashboard</h2><p style="color:#aaa; margin-bottom: 30px;">Welcome back</p>
+    <div class="admin-stats"><div class="admin-stat-card"><h3 id="adminTotalBookings">0</h3><p>Total Bookings</p></div><div class="admin-stat-card"><h3 id="adminTotalUsers">0</h3><p>Registered Users</p></div><div class="admin-stat-card"><h3 id="adminTodayBookings">0</h3><p>Today's Bookings</p></div><div class="admin-stat-card"><h3 id="adminRevenue">0</h3><p>Total Revenue (R)</p></div></div>
+    <div style="margin-bottom: 30px; display: flex; gap: 12px; flex-wrap: wrap;"><button id="refreshAdminData" class="btn-primary">Refresh Data</button><button id="exportBookingsBtn" class="btn-outline">Export Bookings</button></div>
+    <h3>Manage Bookings</h3><div class="bookings-table"><table><thead><tr><th>Client</th><th>Service</th><th>Barber</th><th>Date</th><th>Time</th><th>Amount</th><th>Action</th></tr></thead><tbody id="adminBookingsList"></tbody></table></div>
+    <h3 style="margin-top: 30px;">Registered Users</h3><div class="bookings-table"><table><thead><tr><th>Name</th><th>Email</th><th>Membership</th><th>Bookings</th></tr></thead><tbody id="adminUsersList"></tbody></table></div>
+  </div>
+</div>
+
+<footer>© 2025 MADIBA STUDIOS — PREMIUM STUDENT GROOMING. CAPE TOWN.</footer>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAAYBiM31WlEXXSANuYGbUsv8obJco1qhQ",
+    authDomain: "madiba-studios.firebaseapp.com",
+    projectId: "madiba-studios",
+    storageBucket: "madiba-studios.firebasestorage.app",
+    messagingSenderId: "329185060386",
+    appId: "1:329185060386:web:d8fa64c95c9c312edd4c7b",
+    measurementId: "G-JQ3WQF4Z59"
+  };
+  
+  const EMAILJS_CONFIG = { serviceId: "service_f50ublr", bookingTemplateId: "template_5lmzu2j", cancellationTemplateId: "template_y5kelrd", publicKey: "IDqXwetwSYFXwqxQA" };
+  emailjs.init(EMAILJS_CONFIG.publicKey);
+  
+  let db, auth, currentUser = null, isAdminLogged = false;
+  
+  const services = [
+    {name:"Low Bald Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0048.jpg?updatedAt=1775929388278"},
+    {name:"Mid Bald Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0041.jpg?updatedAt=1775929387916"},
+    {name:"High Bald Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0040.jpg?updatedAt=1775929387889"},
+    {name:"Low Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0050.jpg?updatedAt=1775929387640"},
+    {name:"High Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0046.jpg?updatedAt=1775929387388"},
+    {name:"Temple Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0045.jpg?updatedAt=1775929387294"},
+    {name:"High Top Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0043.jpg?updatedAt=1775929387792"},
+    {name:"Mohawk", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0049.jpg?updatedAt=1775929387808"},
+    {name:"Mullet", price:80, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0042.jpg?updatedAt=1775929387419"},
+    {name:"Buzz Cut", price:45, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0047.jpg?updatedAt=1775929386458"},
+    {name:"Trim", price:45, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0048.jpg?updatedAt=1775929388278"},
+    {name:"Bald", price:40, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0041.jpg?updatedAt=1775929387916"}
+  ];
+  const products = [
+    {name:"Pomade", price:120, img:"https://source.unsplash.com/400x300/?hair,pomade"},
+    {name:"Beard Oil", price:95, img:"https://source.unsplash.com/400x300/?beard,oil"},
+    {name:"Texture Powder", price:110, img:"https://source.unsplash.com/400x300/?hair,product"},
+    {name:"Wave Brush", price:85, img:"https://source.unsplash.com/400x300/?brush,waves"}
+  ];
+  
+  let cart = [];
+  const timeSlots = Array.from({length: 11}, (_,i) => `${(i+8).toString().padStart(2,'0')}:00`);
+  
+  function renderCatalog() {
+    const container = document.getElementById("servicesList");
+    container.innerHTML = services.map(s => `<div class="service-card" onclick="selectServiceForBooking('${s.name}', ${s.price})"><img class="service-img" src="${s.img}" onerror="this.src='https://placehold.co/400x220/222/white?text=Cut'"><div class="service-info"><h3>${s.name}</h3><div class="price">R${s.price}</div><button class="btn-outline addToCartBtn" data-name="${s.name}" data-price="${s.price}" onclick="event.stopPropagation()">Add to Cart</button></div></div>`).join('');
+    document.querySelectorAll('.addToCartBtn').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); addToCart({name: btn.dataset.name, price: parseInt(btn.dataset.price)}); }));
+  }
+  
+  function selectServiceForBooking(name, price) {
+    document.getElementById("serviceSelect").value = name;
+    document.getElementById("calendarContainer").style.display = "block";
+    scrollToSection('booking');
+    showNotif(`Selected ${name} - R${price}. Please pick a date.`);
+  }
+  
+  function renderProducts() {
+    const container = document.getElementById("productList");
+    container.innerHTML = products.map(p => `<div class="product-card"><img class="product-img" src="${p.img}" onerror="this.src='https://placehold.co/300x200/222/white?text=Merch'"><div class="product-info"><h3>${p.name}</h3><div class="price">R${p.price}</div><button class="btn-outline addProductBtn" data-name="${p.name}" data-price="${p.price}">Add to Cart</button></div></div>`).join('');
+    document.querySelectorAll('.addProductBtn').forEach(btn => btn.addEventListener('click', () => addToCart({name: btn.dataset.name, price: parseInt(btn.dataset.price)})));
+  }
+  
+  function addToCart(item) { cart.push(item); updateCartUI(); showNotif(`Added ${item.name} to cart`); }
+  function updateCartUI() { document.getElementById("cartCount").innerText = cart.length; let total = cart.reduce((s,i)=>s+i.price,0); document.getElementById("cartTotal").innerText = total; document.getElementById("totalAmountSpan").innerText = total; document.getElementById("cartItems").innerHTML = cart.map((item,idx)=>`<div class="cart-item"><span>${item.name} - R${item.price}</span><button onclick="removeFromCart(${idx})" style="background:none; border:none; color:#ff4444;"><i class="fas fa-trash"></i></button></div>`).join('') || "<p>Cart empty</p>"; }
+  window.removeFromCart = (idx) => { cart.splice(idx,1); updateCartUI(); };
+  
+  let calendarInstance = null;
+  document.addEventListener('DOMContentLoaded', () => {
+    let calendarEl = document.getElementById('fullYearCalendar');
+    if(calendarEl && !calendarInstance) {
+      calendarInstance = new FullCalendar.Calendar(calendarEl, { initialView: 'dayGridMonth', headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth' }, height: 'auto', dateClick: function(info) { selectedDate = info.dateStr; document.getElementById("selectedDate").value = selectedDate; updateAvailableSlots(); showNotif(`Date selected: ${selectedDate}`); } });
+      calendarInstance.render();
+    }
+  });
+  
+  let selectedDate = null;
+  async function fetchBookings() { if(!db) return []; const snap = await db.collection("bookings").get(); return snap.docs.map(d=>({id:d.id,...d.data()})); }
+  async function fetchUsers() { if(!db) return []; const snap = await db.collection("users").get(); return snap.docs.map(d=>({id:d.id,...d.data()})); }
+  async function updateAvailableSlots() { const date = document.getElementById("selectedDate").value, barber = document.getElementById("barberSelect").value; if(!date || !barber) return; const bookings = await fetchBookings(); const booked = bookings.filter(b => b.date === date && b.barber === barber).map(b=>b.timeSlot); const available = timeSlots.filter(s=>!booked.includes(s)); document.getElementById("timeSlot").innerHTML = available.length ? available.map(s=>`<option value="${s}">${s}</option>`).join('') : '<option disabled>Fully booked</option>'; }
+  document.getElementById("barberSelect")?.addEventListener("change", updateAvailableSlots);
+  function showNotif(msg, isError=false) { let d=document.createElement('div'); d.className='notification'; d.innerHTML=`<i class="fas ${isError ? 'fa-times-circle' : 'fa-check-circle'}"></i> ${msg}`; document.body.appendChild(d); setTimeout(()=>d.remove(),3000); }
+  
+  async function sendPasswordReset(email) { const errorDiv = document.getElementById('resetError'), successDiv = document.getElementById('resetSuccess'); errorDiv.innerText = ''; successDiv.style.display = 'none'; if (!email) { errorDiv.innerText = 'Please enter your email address'; return; } try { await auth.sendPasswordResetEmail(email, { url: window.location.href, handleCodeInApp: false }); successDiv.innerText = `Password reset email sent to ${email}. Check your inbox.`; successDiv.style.display = 'block'; showNotif(`Reset email sent to ${email}`); setTimeout(() => { document.getElementById('resetModal').style.display = 'none'; }, 4000); } catch(error) { errorDiv.innerText = error.message || 'Failed to send reset email.'; } }
+  async function changeEmail(newEmail, password) { if (!currentUser) { showNotif('Please login first', true); return; } try { const credential = firebase.auth.EmailAuthProvider.credential(currentUser.email, password); await currentUser.reauthenticateWithCredential(credential); await currentUser.updateEmail(newEmail); const userData = await db.collection('users').doc(currentUser.email).get(); if (userData.exists) { await db.collection('users').doc(newEmail).set(userData.data()); await db.collection('users').doc(currentUser.email).delete(); } showNotif(`Email changed. Please sign in again.`); await auth.signOut(); document.getElementById('changeEmailModal').style.display = 'none'; } catch(error) { document.getElementById('changeEmailError').innerText = error.message; } }
+  
+  // Create Admin User in Firebase on load
+  async function createAdminUser() {
+    try {
+      const adminEmail = "admin@madibastudios.co.za";
+      const adminPassword = "MadibaAdmin2026!";
+      try {
+        await auth.createUserWithEmailAndPassword(adminEmail, adminPassword);
+        console.log("Admin user created");
+      } catch(e) { if(e.code !== 'auth/email-already-in-use') console.warn(e); }
+    } catch(e) { console.warn(e); }
+  }
+  
+  // Admin Login
+  document.getElementById('adminNavBtn').onclick = () => document.getElementById('adminLoginModal').style.display = 'flex';
+  document.getElementById('closeAdminLoginModal').onclick = () => document.getElementById('adminLoginModal').style.display = 'none';
+  document.getElementById('submitAdminLogin').onclick = async () => {
+    const email = document.getElementById('adminEmail').value;
+    const password = document.getElementById('adminPassword').value;
+    const errorDiv = document.getElementById('adminLoginError');
+    if (email !== 'admin@madibastudios.co.za') { errorDiv.innerText = 'Invalid admin credentials'; return; }
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      isAdminLogged = true;
+      document.getElementById('adminLoginModal').style.display = 'none';
+      document.getElementById('adminDashboard').style.display = 'block';
+      loadAdminPanel();
+      showNotif('Admin logged in successfully');
+    } catch(error) { 
+      errorDiv.innerText = 'Invalid admin password. Make sure you created the admin account first.';
+      createAdminUser();
+    }
+  };
+  
+  async function loadAdminPanel() {
+    if (!isAdminLogged) return;
+    const bookings = await fetchBookings();
+    const users = await fetchUsers();
+    const today = new Date().toISOString().split('T')[0];
+    const todayBookings = bookings.filter(b => b.date === today).length;
+    const totalRevenue = bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+    document.getElementById('adminTotalBookings').innerText = bookings.length;
+    document.getElementById('adminTotalUsers').innerText = users.length;
+    document.getElementById('adminTodayBookings').innerText = todayBookings;
+    document.getElementById('adminRevenue').innerText = totalRevenue;
+    const bookingsHtml = bookings.map(b => `<tr><td>${b.fullName}</td><td>${b.service}</td><td>${b.barber}</td><td>${b.date}</td><td>${b.timeSlot}</td><td>R${b.totalAmount || 0}</td><td><button onclick="cancelBooking('${b.id}')" class="btn-danger">Cancel</button></td></tr>`).join('');
+    document.getElementById('adminBookingsList').innerHTML = bookingsHtml || '<tr><td colspan="7">No bookings</td></tr>';
+    const usersHtml = users.map(u => `<tr><td>${u.fullName}</td><td>${u.email}</td><td>${u.membership || 'Silver'}</td><td>${u.totalBookings || 0}</td></tr>`).join('');
+    document.getElementById('adminUsersList').innerHTML = usersHtml || '<tr><td colspan="4">No users</td></tr>';
+  }
+  
+  window.cancelBooking = async (id) => {
+    const bookingRef = db.collection('bookings').doc(id);
+    const booking = (await bookingRef.get()).data();
+    await bookingRef.delete();
+    if (booking?.email) {
+      try { await emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.cancellationTemplateId, { to_email: booking.email, name: booking.fullName, service: booking.service }); } catch(e) {}
+    }
+    loadAdminPanel(); updateStats(); showNotif('Booking cancelled');
+  };
+  
+  document.getElementById('refreshAdminData')?.addEventListener('click', loadAdminPanel);
+  document.getElementById('exportBookingsBtn')?.addEventListener('click', async () => { const bookings = await fetchBookings(); let csv = 'Name,Email,Service,Barber,Date,Time,Amount\n'; bookings.forEach(b => { csv += `${b.fullName},${b.email},${b.service},${b.barber},${b.date},${b.timeSlot},${b.totalAmount}\n`; }); const blob = new Blob([csv], { type: 'text/csv' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'madiba_bookings.csv'; a.click(); URL.revokeObjectURL(url); });
+  document.getElementById('closeAdmin').onclick = () => { document.getElementById('adminDashboard').style.display = 'none'; isAdminLogged = false; auth.signOut(); };
+  
+  // Auth Functions
+  function showAuthModal(mode = 'login') { const modal = document.getElementById('authModal'); document.getElementById('authTitle').innerText = mode === 'login' ? 'Login' : 'Sign Up'; document.getElementById('authSubmitBtn').innerHTML = mode === 'login' ? '<i class="fas fa-sign-in-alt"></i> Login' : '<i class="fas fa-user-plus"></i> Sign Up'; document.getElementById('authSwitch').innerHTML = mode === 'login' ? `Don't have an account? <span>Sign Up</span>` : `Already have an account? <span>Login</span>`; document.getElementById('authEmail').value = ''; document.getElementById('authPassword').value = ''; document.getElementById('authError').innerText = ''; modal.style.display = 'flex'; window.currentAuthMode = mode; }
+  async function handleAuth() { const email = document.getElementById('authEmail').value, password = document.getElementById('authPassword').value; if (!email || !password) { document.getElementById('authError').innerText = 'Please fill all fields'; return; } try { if (window.currentAuthMode === 'login') { await auth.signInWithEmailAndPassword(email, password); showNotif('Logged in successfully!'); } else { await auth.createUserWithEmailAndPassword(email, password); await db.collection('users').doc(email).set({ fullName: email.split('@')[0], email, location: '', roomNumber: '', studentStatus: 'Yes', totalBookings: 0, membership: 'Silver', createdAt: new Date().toISOString() }); showNotif('Account created successfully!'); } document.getElementById('authModal').style.display = 'none'; } catch(error) { document.getElementById('authError').innerText = error.message; } }
+  async function googleSignIn() { try { const provider = new firebase.auth.GoogleAuthProvider(); const result = await auth.signInWithPopup(provider); const user = result.user; const userRef = db.collection('users').doc(user.email); if (!(await userRef.get()).exists) await userRef.set({ fullName: user.displayName, email: user.email, location: '', roomNumber: '', studentStatus: 'Yes', totalBookings: 0, membership: 'Silver', createdAt: new Date().toISOString() }); showNotif(`Welcome ${user.displayName}!`); document.getElementById('authModal').style.display = 'none'; } catch(error) { showNotif(error.message, true); } }
+  function updateUIForUser(user) { const loginBtn = document.getElementById('showLoginBtn'), signupBtn = document.getElementById('showSignupBtn'), userInfoDiv = document.getElementById('userInfo'), bookingContainer = document.getElementById('bookingFormContainer'), loginPrompt = document.getElementById('loginPrompt'); if (user) { loginBtn.style.display = 'none'; signupBtn.style.display = 'none'; userInfoDiv.style.display = 'block'; document.getElementById('userName').innerText = user.displayName || user.email.split('@')[0]; document.getElementById('userAvatar').src = user.photoURL || `https://ui-avatars.com/api/?background=ffffff&color=000&name=${(user.displayName || user.email)[0]}`; document.getElementById('email').value = user.email; document.getElementById('fullName').value = user.displayName || ''; bookingContainer.style.display = 'block'; loginPrompt.style.display = 'none'; loadDashboard(user.email); } else { loginBtn.style.display = 'flex'; signupBtn.style.display = 'flex'; userInfoDiv.style.display = 'none'; bookingContainer.style.display = 'none'; loginPrompt.style.display = 'block'; document.getElementById('clientDashboard').innerHTML = '<p style="color:#777;">Login to view your dashboard.</p>'; } }
+  async function logout() { await auth.signOut(); showNotif('Logged out'); }
+  async function loadDashboard(email) { const userDoc = await db.collection('users').doc(email).get(); if(!userDoc.exists) return; const data = userDoc.data(); const bookingsSnap = await db.collection('bookings').where('email','==',email).get(); let history = bookingsSnap.docs.map(d=>`<div class="booking-history-item"><i class="fas fa-cut"></i> ${d.data().service} | ${d.data().date} ${d.data().timeSlot} | R${d.data().totalAmount||0}</div>`).join(''); document.getElementById('clientDashboard').innerHTML = `<div><h3>${data.fullName}</h3><span class="badge">${data.membership} Member</span><p>${data.location || 'Set location'} | Room ${data.roomNumber || 'N/A'}</p><h4 style="margin-top:20px;">Booking History</h4>${history || '<p>No bookings yet</p>'}</div>`; }
+  
+  document.getElementById("checkoutForm")?.addEventListener("submit", async(e)=>{ e.preventDefault(); if (!currentUser) { showNotif('Please login first', true); return; } const fullName = document.getElementById("fullName").value, email = document.getElementById("email").value, location = document.getElementById("location").value, room = document.getElementById("roomNumber").value, studentStatus = document.getElementById("studentStatus").value, service = document.getElementById("serviceSelect").value, barber = document.getElementById("barberSelect").value, date = document.getElementById("selectedDate").value, timeSlot = document.getElementById("timeSlot").value; if(!fullName || !email || !location || !room || !date || !timeSlot) return showNotif("All fields required", true); const bookingsNow = await fetchBookings(); if(bookingsNow.some(b=>b.barber===barber && b.date===date && b.timeSlot===timeSlot)) { showNotif("Slot already taken", true); return; } let totalCart = cart.reduce((s,i)=>s+i.price,0); const userRef = db.collection('users').doc(email); const userDoc = await userRef.get(); let totalBookingsUser = (userDoc.data()?.totalBookings || 0) + 1; await userRef.set({ fullName, email, location, roomNumber:room, studentStatus, totalBookings: totalBookingsUser, membership: totalBookingsUser <=2 ? 'Silver' : totalBookingsUser <=5 ? 'Gold' : 'Platinum' }, { merge: true }); await db.collection('bookings').add({ fullName, email, service, barber, date, timeSlot, location, room, studentStatus, cartItems: cart, totalAmount: totalCart, createdAt: new Date().toISOString() }); try { await emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.bookingTemplateId, { to_email: email, name: fullName, service, barber, date, time: timeSlot, total: totalCart, location }); showNotif(`Booking confirmed! Email sent to ${email}`); } catch(err) { showNotif("Booking confirmed! (Email notification pending)", true); } cart = []; updateCartUI(); updateAvailableSlots(); loadDashboard(email); updateStats(); document.getElementById("checkoutForm").reset(); document.getElementById("selectedDate").value = ""; document.getElementById("timeSlot").innerHTML = '<option value="">Select time</option>'; });
+  
+  async function updateStats() { if(!db) return; const bookings=await fetchBookings(); const usersSnap=await db.collection('users').get(); document.getElementById('statBookings').innerText=bookings.length; document.getElementById('statUsers').innerText=usersSnap.size; }
+  
+  // Event Listeners
+  document.getElementById('showLoginBtn').onclick = () => showAuthModal('login');
+  document.getElementById('showSignupBtn').onclick = () => showAuthModal('signup');
+  document.getElementById('closeAuthModal').onclick = () => document.getElementById('authModal').style.display = 'none';
+  document.getElementById('authSubmitBtn').onclick = handleAuth;
+  document.getElementById('googleAuthBtn').onclick = googleSignIn;
+  document.getElementById('authSwitch').onclick = () => showAuthModal(window.currentAuthMode === 'login' ? 'signup' : 'login');
+  document.getElementById('logoutBtnDropdown').onclick = logout;
+  document.getElementById('promptLoginBtn').onclick = () => showAuthModal('login');
+  document.getElementById('cartBtn').onclick = () => document.getElementById('cartModal').style.display = 'block';
+  document.getElementById('closeCart').onclick = () => document.getElementById('cartModal').style.display = 'none';
+  document.getElementById('checkoutBtn').onclick = () => { document.getElementById('cartModal').style.display = 'none'; scrollToSection('booking'); };
+  document.getElementById('forgotPasswordLink').onclick = () => { document.getElementById('authModal').style.display = 'none'; document.getElementById('resetModal').style.display = 'flex'; };
+  document.getElementById('closeResetModal').onclick = () => document.getElementById('resetModal').style.display = 'none';
+  document.getElementById('sendResetBtn').onclick = () => sendPasswordReset(document.getElementById('resetEmail').value);
+  document.getElementById('resetPasswordBtn').onclick = () => document.getElementById('resetModal').style.display = 'flex';
+  document.getElementById('changeEmailBtn').onclick = () => document.getElementById('changeEmailModal').style.display = 'flex';
+  document.getElementById('closeChangeEmailModal').onclick = () => document.getElementById('changeEmailModal').style.display = 'none';
+  document.getElementById('confirmChangeEmailBtn').onclick = () => changeEmail(document.getElementById('newEmail').value, document.getElementById('currentPasswordForEmail').value);
+  document.getElementById('accountSettingsBtn').onclick = () => scrollToSection('dashboard');
+  document.getElementById('profileTrigger')?.addEventListener('click', () => { const d = document.getElementById('dropdownContent'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; });
+  document.addEventListener('click', (e) => { if (!e.target.closest('.profile-dropdown')) document.getElementById('dropdownContent').style.display = 'none'; });
+  function scrollToSection(id) { document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
+  
+  renderCatalog(); renderProducts(); updateCartUI();
+  document.getElementById('serviceSelect').innerHTML = services.map(s => `<option value="${s.name}">${s.name} — R${s.price}</option>`).join('');
+  document.getElementById('serviceSelect').addEventListener('change', () => { document.getElementById('calendarContainer').style.display = 'block'; });
+  
+  try { if(firebase.apps.length === 0) firebase.initializeApp(firebaseConfig); db = firebase.firestore(); auth = firebase.auth(); updateStats(); createAdminUser(); auth.onAuthStateChanged(user => { currentUser = user; updateUIForUser(user); }); } catch(e){ console.warn(e); }
+</script>
+</body>
+</html>
