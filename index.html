@@ -1,1 +1,1173 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Madiba Studios | Premium Student Grooming</title>
+  <link rel="icon" type="image/png" href="https://ik.imagekit.io/cxzgj4jeg/Untitled%20design%20(81).png">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #000000; color: #FFFFFF; scroll-behavior: smooth; overflow-x: hidden; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 40px; }
+    @media (max-width: 768px) { .container { padding: 0 24px; } }
+    
+    :root { --brown-primary: #C68E3C; --brown-dark: #8B5A2B; --brown-light: #D4A055; }
+    
+    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 18px 48px; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(198,142,60,0.2); flex-wrap: wrap; gap: 16px; }
+    @media (max-width: 1024px) { .navbar { padding: 14px 32px; } }
+    @media (max-width: 768px) { .navbar { flex-direction: column; padding: 14px 20px; } }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-img { height: 50px; width: auto; object-fit: contain; }
+    .logo h2 { font-size: 1.6rem; font-weight: 600; background: linear-gradient(135deg, #FFFFFF, var(--brown-primary)); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: 'Playfair Display', serif; }
+    @media (max-width: 768px) { .logo-img { height: 40px; } .logo h2 { font-size: 1.3rem; } }
+    
+    .nav-links { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; justify-content: center; }
+    @media (max-width: 768px) { .nav-links { gap: 14px; } }
+    .nav-links a { text-decoration: none; color: #EAEAEA; font-weight: 500; font-size: 0.8rem; transition: 0.2s; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
+    .nav-links a:hover { color: var(--brown-primary); }
+    .btn-outline { border: 1.5px solid var(--brown-primary); background: transparent; padding: 7px 18px; border-radius: 100px; font-weight: 600; cursor: pointer; color: white; font-size: 0.75rem; transition: all 0.2s; }
+    .btn-outline:hover { background: var(--brown-primary); color: black; transform: translateY(-2px); }
+    .btn-primary { background: var(--brown-primary); border: none; padding: 9px 24px; border-radius: 100px; font-weight: 700; color: #000000; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-primary:hover { background: var(--brown-light); transform: translateY(-2px); color: black; }
+    .btn-download { background: #10b981; border: none; padding: 10px 24px; border-radius: 100px; font-weight: 600; cursor: pointer; color: white; font-size: 0.85rem; transition: all 0.2s; }
+    .btn-download:hover { transform: translateY(-2px); background: #059669; }
+    .btn-danger { background: #dc2626; border: none; padding: 5px 12px; border-radius: 100px; font-weight: 600; cursor: pointer; color: white; font-size: 0.7rem; }
+    
+    .hero { padding: 100px 0 120px; text-align: center; background: radial-gradient(circle at 30% 20%, #0A0A0A, #000000); }
+    @media (max-width: 768px) { .hero { padding: 70px 0 80px; } }
+    .hero h1 { font-size: 5rem; font-weight: 700; letter-spacing: -2px; background: linear-gradient(145deg, #FFFFFF, var(--brown-primary)); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: 'Playfair Display', serif; }
+    @media (max-width: 768px) { .hero h1 { font-size: 2.8rem; } }
+    .hero p { font-size: 1.05rem; margin: 20px auto; max-width: 650px; color: #CCCCCC; line-height: 1.6; }
+    
+    .stats-grid { display: flex; justify-content: center; gap: 35px; margin-top: 50px; flex-wrap: wrap; }
+    .stat-card { background: #0F0F0F; padding: 20px 35px; border-radius: 48px; border: 1px solid rgba(198,142,60,0.3); text-align: center; }
+    .stat-card h3 { font-size: 2rem; font-weight: 700; color: var(--brown-primary); font-family: 'Playfair Display', serif; }
+    
+    section { padding: 80px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    @media (max-width: 768px) { section { padding: 60px 0; } }
+    .section-title { font-size: 2.8rem; font-weight: 600; margin-bottom: 45px; background: linear-gradient(135deg, #FFFFFF, var(--brown-primary)); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: 'Playfair Display', serif; letter-spacing: -0.5px; }
+    
+    .services-grid, .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px; }
+    .service-card, .product-card { background: #0B0B0B; border-radius: 28px; overflow: hidden; transition: all 0.3s; border: 1px solid rgba(198,142,60,0.2); cursor: pointer; }
+    .service-card:hover, .product-card:hover { transform: translateY(-5px); border-color: var(--brown-primary); }
+    .service-img { width: 100%; height: 220px; object-fit: cover; }
+    .product-img { width: 100%; height: 190px; object-fit: cover; }
+    .service-info, .product-info { padding: 22px; }
+    .price { font-weight: 700; font-size: 1.8rem; color: var(--brown-primary); margin: 10px 0; font-family: 'Playfair Display', serif; }
+    .service-description { color: #aaa; font-size: 0.85rem; line-height: 1.6; margin-top: 8px; }
+    
+    .barbers-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 30px; margin-top: 20px; }
+    @media (max-width: 900px) { .barbers-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 600px) { .barbers-grid { grid-template-columns: 1fr; } }
+    .barber-card { background: #0B0B0B; border-radius: 28px; padding: 25px; text-align: center; border: 1px solid rgba(198,142,60,0.2); transition: all 0.3s; }
+    .barber-card:hover { transform: translateY(-5px); border-color: var(--brown-primary); }
+    .barber-img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px; border: 3px solid var(--brown-primary); }
+    .barber-name { font-size: 1.3rem; font-weight: 600; margin: 10px 0; font-family: 'Playfair Display', serif; }
+    .barber-status { display: inline-block; padding: 4px 12px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; margin-top: 8px; }
+    .status-available { background: #10b981; color: white; }
+    .status-unavailable { background: #dc2626; color: white; }
+    
+    .booking-form { background: #0A0A0A; padding: 35px; border-radius: 36px; border: 1px solid rgba(198,142,60,0.3); margin-bottom: 25px; }
+    .form-group { margin-bottom: 22px; }
+    .form-group label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: #aaa; font-weight: 500; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 22px; }
+    @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; gap: 18px; } }
+    input, select { width: 100%; padding: 12px 18px; border-radius: 100px; border: 1px solid #2A2A2A; background: #111; color: white; font-size: 0.88rem; }
+    input:focus, select:focus { outline: none; border-color: var(--brown-primary); box-shadow: 0 0 0 3px rgba(198,142,60,0.12); }
+    
+    #fullYearCalendar { background: #111; border-radius: 24px; padding: 15px; margin-bottom: 25px; }
+    .fc { background: #111; border-radius: 20px; }
+    .fc .fc-toolbar-title { color: white; font-size: 1.2rem; font-family: 'Playfair Display', serif; }
+    .fc .fc-button-primary { background: var(--brown-primary); border: none; }
+    
+    .membership-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; margin-top: 25px; }
+    @media (max-width: 900px) { .membership-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 600px) { .membership-grid { grid-template-columns: 1fr; } }
+    .membership-card { background: #0B0B0B; border-radius: 28px; padding: 28px; text-align: center; border: 1px solid rgba(198,142,60,0.2); }
+    .membership-card.silver { border-top: 4px solid #C0C0C0; }
+    .membership-card.gold { border-top: 4px solid #FFD700; }
+    .membership-card.platinum { border-top: 4px solid #E5E4E2; }
+    .membership-benefits { list-style: none; margin-top: 18px; text-align: left; }
+    .membership-benefits li { margin: 10px 0; font-size: 0.85rem; color: #ccc; display: flex; align-items: center; gap: 10px; }
+    
+    .auth-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); z-index: 4000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(12px); }
+    .auth-card { background: #0A0A0A; border-radius: 40px; padding: 40px; width: 480px; max-width: 90%; border: 1px solid rgba(198,142,60,0.4); box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+    .auth-card h2 { margin-bottom: 28px; text-align: center; font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--brown-primary); }
+    .auth-card input { width: 100%; padding: 14px 18px; margin-bottom: 18px; border-radius: 100px; border: 1px solid #2A2A2A; background: #111; color: white; font-size: 0.9rem; }
+    .auth-card .btn-primary { width: 100%; padding: 12px; font-size: 0.95rem; margin-top: 8px; }
+    .auth-switch { text-align: center; margin-top: 22px; color: #aaa; cursor: pointer; font-size: 0.85rem; }
+    .auth-switch span { color: var(--brown-primary); text-decoration: underline; font-weight: 600; }
+    .forgot-password-link { text-align: right; margin-bottom: 18px; }
+    .forgot-password-link a { color: var(--brown-primary); font-size: 0.75rem; cursor: pointer; }
+    
+    .admin-only { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000000; z-index: 3000; overflow-y: auto; padding: 20px; }
+    .admin-panel { background: #0A0A0A; border-radius: 32px; padding: 30px; max-width: 1600px; margin: 20px auto; border: 1px solid rgba(198,142,60,0.3); }
+    .admin-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; margin-bottom: 30px; }
+    .admin-stat-card { background: #111; padding: 18px; border-radius: 24px; text-align: center; border-left: 4px solid var(--brown-primary); }
+    .admin-stat-card h3 { font-size: 1.7rem; color: var(--brown-primary); font-family: 'Playfair Display', serif; }
+    .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 30px; }
+    .chart-card { background: #111; border-radius: 24px; padding: 18px; }
+    .bookings-table { width: 100%; overflow-x: auto; margin-top: 25px; }
+    .bookings-table table { width: 100%; border-collapse: collapse; min-width: 800px; }
+    .bookings-table th, .bookings-table td { padding: 12px; text-align: left; border-bottom: 1px solid #222; font-size: 0.85rem; }
+    .pop-badge { display: inline-block; padding: 3px 8px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; cursor: pointer; }
+    .pop-pending { background: #f59e0b; color: black; }
+    .pop-uploaded { background: #10b981; color: white; }
+    .close-admin { position: absolute; top: 20px; right: 25px; font-size: 28px; cursor: pointer; background: none; border: none; color: white; }
+    
+    .ai-chatbot { position: fixed; bottom: 30px; right: 30px; z-index: 1000; }
+    .chat-toggle { width: 55px; height: 55px; background: var(--brown-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(198,142,60,0.4); }
+    .chat-toggle i { font-size: 26px; color: #000; }
+    .chat-window { position: absolute; bottom: 75px; right: 0; width: 350px; background: #0A0A0A; border-radius: 24px; border: 1px solid rgba(198,142,60,0.3); display: none; flex-direction: column; overflow: hidden; }
+    .chat-header { background: #1a1a1a; padding: 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(198,142,60,0.3); color: var(--brown-primary); font-family: 'Playfair Display', serif; }
+    .chat-messages { height: 340px; overflow-y: auto; padding: 14px; }
+    .chat-message { margin-bottom: 10px; display: flex; }
+    .chat-message.bot { justify-content: flex-start; }
+    .chat-message.user { justify-content: flex-end; }
+    .chat-bubble { max-width: 80%; padding: 9px 13px; border-radius: 18px; font-size: 0.8rem; }
+    .chat-message.bot .chat-bubble { background: #1a1a1a; color: white; border-left: 3px solid var(--brown-primary); }
+    .chat-message.user .chat-bubble { background: var(--brown-primary); color: black; }
+    .chat-input { display: flex; padding: 10px; border-top: 1px solid #333; gap: 8px; }
+    .chat-input input { flex: 1; border-radius: 100px; padding: 8px 14px; }
+    .chat-input button { background: var(--brown-primary); border: none; border-radius: 100px; padding: 8px 14px; cursor: pointer; color: black; font-weight: 600; }
+    
+    .payment-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); z-index: 5000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(12px); }
+    .payment-card { background: #0A0A0A; border-radius: 36px; padding: 35px; width: 520px; max-width: 90%; border: 1px solid rgba(198,142,60,0.4); }
+    .pop-upload { border: 2px dashed #444; padding: 18px; text-align: center; border-radius: 20px; margin: 18px 0; cursor: pointer; }
+    .notification { position: fixed; bottom: 20px; right: 20px; background: #1A1A1A; border-left: 4px solid var(--brown-primary); padding: 12px 22px; border-radius: 20px; z-index: 2000; animation: fadeInUp 0.3s ease; font-size: 0.85rem; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .badge { background: #1A1A1A; padding: 4px 10px; border-radius: 100px; font-size: 0.7rem; }
+    footer { text-align: center; padding: 45px 20px 35px; background: #020202; border-top: 1px solid rgba(198,142,60,0.1); }
+    .social-icons { display: flex; justify-content: center; gap: 25px; margin-bottom: 22px; }
+    .social-icons a { color: #aaa; font-size: 1.3rem; transition: all 0.2s; }
+    .social-icons a:hover { color: var(--brown-primary); transform: translateY(-3px); }
+    .footer-copyright { color: #6C6C6C; font-size: 0.75rem; margin-bottom: 6px; }
+    .footer-credit { font-size: 0.65rem; color: #555; font-family: 'Cormorant Garamond', serif; }
+    .user-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 2px solid var(--brown-primary); }
+    .profile-dropdown { position: relative; display: inline-block; }
+    .dropdown-content { display: none; position: absolute; right: 0; top: 45px; background: #1A1A1A; min-width: 190px; border-radius: 18px; border: 1px solid rgba(198,142,60,0.3); z-index: 100; overflow: hidden; }
+    .dropdown-content a { color: white; padding: 10px 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.8rem; }
+    .dropdown-content a:hover { background: rgba(198,142,60,0.2); color: var(--brown-primary); }
+    .booking-history-item { background: #111; margin: 10px 0; padding: 12px; border-radius: 22px; border-left: 3px solid var(--brown-primary); font-size: 0.85rem; }
+    .about-story-container { background: #050505; border-radius: 32px; padding: 45px; margin-top: 20px; }
+    .premium-text { line-height: 1.75; font-size: 1rem; color: #E0E0E0; }
+    .premium-text strong { color: var(--brown-primary); font-weight: 600; font-size: 1.05rem; font-family: 'Playfair Display', serif; }
+    .cart-item { background: #111; padding: 10px; border-radius: 18px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; }
+    .login-prompt { background: #1a1a1a; padding: 22px; border-radius: 28px; text-align: center; margin-bottom: 25px; }
+    .dashboard-card { background: #0B0B0B; border-radius: 32px; padding: 30px; text-align: center; }
+    .full-page-section { min-height: 70vh; display: flex; flex-direction: column; justify-content: center; }
+    #about, #story { display: none; }
+    .barbers-section { padding: 80px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">
+    <img class="logo-img" src="https://ik.imagekit.io/cxzgj4jeg/Untitled%20design%20(81).png" alt="Logo" onerror="this.style.display='none'">
+    <h2>MADIBA STUDIOS</h2>
+  </div>
+  <div class="nav-links">
+    <a onclick="showHome()">HOME</a>
+    <a onclick="showAbout()">STUDIO</a>
+    <a onclick="showStory()">LEGACY</a>
+    <a onclick="scrollToSection('services')">CUTS</a>
+    <a onclick="scrollToSection('products')">MERCH</a>
+    <button id="cartBtn" class="btn-outline"><i class="fas fa-shopping-cart"></i> CART (<span id="cartCount">0</span>)</button>
+    <div id="authSection" style="display: flex; gap: 10px; align-items: center;">
+      <button id="showLoginBtn" class="btn-outline"><i class="fas fa-sign-in-alt"></i> LOGIN</button>
+      <button id="showSignupBtn" class="btn-primary"><i class="fas fa-user-plus"></i> SIGN UP</button>
+      <div id="userInfo" style="display: none;" class="profile-dropdown">
+        <div class="profile-trigger" id="profileTrigger" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <img id="userAvatar" class="user-avatar" src="">
+          <span id="userName"></span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="dropdown-content" id="dropdownContent">
+          <a id="accountSettingsBtn"><i class="fas fa-cog"></i> Account</a>
+          <a id="changeEmailBtn"><i class="fas fa-envelope"></i> Change Email</a>
+          <a id="resetPasswordBtn"><i class="fas fa-key"></i> Reset Password</a>
+          <a id="logoutBtnDropdown"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- AI Chatbot -->
+<div class="ai-chatbot">
+  <div class="chat-toggle" id="chatToggle"><i class="fas fa-robot"></i></div>
+  <div class="chat-window" id="chatWindow">
+    <div class="chat-header"><span><i class="fas fa-robot"></i> Madiba AI</span><i class="fas fa-times" id="closeChat" style="cursor:pointer;"></i></div>
+    <div class="chat-messages" id="chatMessages"><div class="chat-message bot"><div class="chat-bubble">Hello! I'm your Madiba Studios AI assistant. I can help you with bookings, prices, barbers, products, payments, and membership. Ask me anything!</div></div></div>
+    <div class="chat-input"><input type="text" id="chatInput" placeholder="Ask me..."><button id="sendChat"><i class="fas fa-paper-plane"></i></button></div>
+  </div>
+</div>
+
+<!-- Auth Modal -->
+<div id="authModal" class="auth-modal" style="display: none;">
+  <div class="auth-card">
+    <div style="display: flex; justify-content: flex-end;"><button id="closeAuthModal" style="background: none; border: none; color: white; font-size: 26px; cursor: pointer;">&times;</button></div>
+    <h2 id="authTitle">Login</h2>
+    <input type="email" id="authEmail" placeholder="Email address">
+    <input type="password" id="authPassword" placeholder="Password">
+    <div id="forgotPasswordContainer" class="forgot-password-link"><a id="forgotPasswordLink">Forgot Password?</a></div>
+    <div id="authError" style="color: #ff6666; font-size: 0.8rem; margin-bottom: 15px;"></div>
+    <button id="authSubmitBtn" class="btn-primary" style="width:100%;"><i class="fas fa-sign-in-alt"></i> Login</button>
+    <button id="googleAuthBtn" class="btn-primary" style="width:100%; margin-top: 15px; background: #4285F4;"><i class="fab fa-google"></i> Sign in with Google</button>
+    <div class="auth-switch" id="authSwitch">Don't have an account? <span>Sign Up</span></div>
+  </div>
+</div>
+
+<!-- Password Reset Modal -->
+<div id="resetModal" class="auth-modal" style="display: none;">
+  <div class="auth-card">
+    <div style="display: flex; justify-content: flex-end;"><button id="closeResetModal" style="background: none; border: none; color: white; font-size: 26px; cursor: pointer;">&times;</button></div>
+    <h2>Reset Password</h2>
+    <input type="email" id="resetEmail" placeholder="Enter your email">
+    <div id="resetError" style="color: #ff6666; font-size: 0.8rem;"></div>
+    <div id="resetSuccess" style="color: #66ff66; font-size: 0.8rem; display: none;"></div>
+    <button id="sendResetBtn" class="btn-primary" style="width:100%;"><i class="fas fa-paper-plane"></i> Send Reset Email</button>
+  </div>
+</div>
+
+<!-- Change Email Modal -->
+<div id="changeEmailModal" class="auth-modal" style="display: none;">
+  <div class="auth-card">
+    <div style="display: flex; justify-content: flex-end;"><button id="closeChangeEmailModal" style="background: none; border: none; color: white; font-size: 26px; cursor: pointer;">&times;</button></div>
+    <h2>Change Email</h2>
+    <input type="email" id="newEmail" placeholder="New Email">
+    <input type="password" id="currentPasswordForEmail" placeholder="Current Password">
+    <div id="changeEmailError" style="color: #ff6666; font-size: 0.8rem;"></div>
+    <button id="confirmChangeEmailBtn" class="btn-primary" style="width:100%;"><i class="fas fa-save"></i> Update Email</button>
+  </div>
+</div>
+
+<!-- Payment Modal -->
+<div id="paymentModal" class="payment-modal" style="display: none;">
+  <div class="payment-card">
+    <div style="display: flex; justify-content: flex-end;"><button id="closePaymentModal" style="background: none; border: none; color: white; font-size: 26px; cursor: pointer;">&times;</button></div>
+    <h2 id="paymentModalTitle">Complete Payment</h2>
+    <p id="paymentModalText"><strong>Bank:</strong> FNB<br><strong>Account:</strong> Madiba Studios<br><strong>Number:</strong> 62840951234<br><strong>Branch:</strong> 250655<br><strong>Reference:</strong> Your Email</p>
+    <div class="pop-upload" id="popUploadArea"><i class="fas fa-cloud-upload-alt"></i><p>Click to upload Proof of Payment (POP)</p><input type="file" id="popFile" accept="image/*,.pdf" style="display: none;"></div>
+    <div id="popStatus" style="color: #10b981; margin: 10px 0;"></div>
+    <button id="submitPaymentBtn" class="btn-download" style="width:100%;"><i class="fas fa-check-circle"></i> Submit & Complete</button>
+  </div>
+</div>
+
+<!-- Product Order Form Modal -->
+<div id="productOrderModal" class="payment-modal" style="display: none;">
+  <div class="payment-card">
+    <div style="display: flex; justify-content: flex-end;"><button id="closeProductOrderModal" style="background: none; border: none; color: white; font-size: 26px; cursor: pointer;">&times;</button></div>
+    <h2><i class="fas fa-box"></i> Complete Your Order</h2>
+    <form id="productOrderForm">
+      <div class="form-group"><label>Full Name *</label><input type="text" id="orderFullName" required></div>
+      <div class="form-group"><label>Email Address *</label><input type="email" id="orderEmail" required></div>
+      <div class="form-group"><label>Delivery Location / Campus *</label><input type="text" id="orderLocation" required></div>
+      <div class="form-group"><label>Room Number *</label><input type="text" id="orderRoom" required></div>
+      <div class="form-group"><label>Phone Number (optional)</label><input type="text" id="orderPhone"></div>
+      <div class="form-group"><label>Order Summary</label><div id="orderItemsList" style="background:#111; padding:12px; border-radius:16px;"></div></div>
+      <p><strong>Total: R<span id="orderTotalAmount">0</span></strong></p>
+      <button type="submit" class="btn-download" style="width:100%; margin-top:15px;"><i class="fas fa-arrow-right"></i> Proceed to Payment</button>
+    </form>
+  </div>
+</div>
+
+<main>
+  <section id="hero" class="hero">
+    <div class="container">
+      <h1>ANYTIME, ANYPLACE</h1>
+      <p>Premium student grooming platform designed for convenience, consistency, and culture. Built for campus life, tailored for modern schedules.</p>
+      <div style="display:flex; gap:15px; justify-content:center; margin:30px 0; flex-wrap: wrap;">
+        <button class="btn-primary" onclick="scrollToSection('booking')"><i class="fas fa-calendar-check"></i> BOOK NOW</button>
+        <button class="btn-outline" onclick="scrollToSection('products')"><i class="fas fa-shopping-bag"></i> SHOP MERCH</button>
+      </div>
+      <div class="price-list-btn">
+        <a href="https://ik.imagekit.io/cxzgj4jeg/WhatsApp%20Image%202026-04-13%20at%2016.04.38.jpeg" download="Price_List.jpg">
+          <button class="btn-download"><i class="fas fa-download"></i> Download Price List</button>
+        </a>
+      </div>
+      <div class="stats-grid" id="liveStats">
+        <div class="stat-card"><h3 id="statBookings">0</h3><p>Total Bookings</p></div>
+        <div class="stat-card"><h3 id="statUsers">0</h3><p>Active Clients</p></div>
+        <div class="stat-card"><h3 id="statBarbers">3</h3><p>Master Barbers</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="full-page-section">
+    <div class="container">
+      <h2 class="section-title">The Studio</h2>
+      <div class="about-story-container">
+        <div class="premium-text">
+          <p><strong>Founded at UCT</strong> — Madiba Studios is more than just a barbershop - it is a student-built brand redefining grooming culture on campus. Founded at the University of Cape Town by Motheo Mbulawa, Madiba Studios began as a response to real-life responsibility and has grown into a trusted grooming service for students across UCT, CPUT, and UWC. What started as a mobile operation has evolved into a brand known for consistency, professionalism, and community.</p>
+          <br/>
+          <p><strong>Convenience & Quality</strong> — We understand the student lifestyle - tight schedules, limited time, and the need to always look presentable. That is why we bring grooming directly to you. Through our mobile services and growing on-campus presence, we eliminate long queues, reduce travel time, and deliver high-quality cuts at affordable prices.</p>
+          <br/>
+          <p><strong>Hygiene & Professionalism</strong> — At Madiba Studios, hygiene and professionalism are non-negotiable. From sanitized tools and clean equipment to branded uniforms and reliable service, every detail is designed to give you confidence in your experience.</p>
+          <br/>
+          <p><strong>Our Vision</strong> — Our vision is clear: To become South Africa's leading student grooming brand, expanding across campuses and setting the standard for quality, convenience, and culture. This is not just grooming. This is legacy.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="story" class="full-page-section">
+    <div class="container">
+      <h2 class="section-title">Legacy & Vision</h2>
+      <div class="about-story-container">
+        <div class="premium-text">
+          <p><strong>The Beginning</strong> — Madiba Studios was founded with purpose, resilience, and vision. What began as a student-led initiative at the University of Cape Town has grown into one of the most recognized student-focused grooming brands in the Southern Suburbs of Cape Town. Built from the ground up, Madiba Studios was created to address a simple but powerful need - accessible, high-quality grooming tailored to student life.</p>
+          <br/>
+          <p><strong>Family & Responsibility</strong> — At its core, the business was inspired by responsibility and family. The foundation of Madiba Studios is deeply rooted in supporting my mother and building something meaningful that could create stability, opportunity, and long-term impact. That sense of purpose shaped the discipline, work ethic, and consistency that define the brand today.</p>
+          <br/>
+          <p><strong>Growth & Recognition</strong> — Starting as a mobile service, we brought convenience directly to students, eliminating long queues and travel while maintaining professional standards. Through consistency, discipline, and attention to detail, the brand quickly earned trust across campuses, expanding its reach to a growing and loyal client base. Over the past three years, we have maintained an exceptionally high standard of service, with over 90% of customer experiences being positive. Our journey has not gone unnoticed. As a finalist in The Pitch UCT 2025, Madiba Studios has been recognised for its innovation, impact, and potential as a scalable business.</p>
+          <br/>
+          <p><strong>Today</strong> — Today, Madiba Studios stands as a structured, evolving brand - combining quality service, strong branding, and a clear growth strategy. We have moved beyond just being a service provider; we are building a system that supports student entrepreneurs, creates opportunities, and sets a new standard for grooming culture. From humble beginnings to a recognized and award-winning presence, our mission remains the same: to deliver premium grooming experiences while building a legacy that extends beyond the chair.<br/><br/>— Motheo Mbulawa, Founder & CEO</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="container">
+      <h2 class="section-title">Signature Cuts</h2>
+      <div class="services-grid" id="servicesList"></div>
+    </div>
+  </section>
+  
+  <section class="barbers-section">
+    <div class="container">
+      <h2 class="section-title">Our Master Barbers</h2>
+      <div class="barbers-grid" id="barbersGrid"></div>
+    </div>
+  </section>
+  
+  <section id="products">
+    <div class="container">
+      <h2 class="section-title">Madiba Merch</h2>
+      <div class="product-grid" id="productList"></div>
+    </div>
+  </section>
+  
+  <section id="membership">
+    <div class="container">
+      <h2 class="section-title">Membership Tiers</h2>
+      <div class="membership-grid" id="membershipGrid"></div>
+    </div>
+  </section>
+
+  <div id="cartModal" style="display:none; position:fixed; top:0; right:0; width:370px; height:100%; background:#0A0A0A; z-index:2000; border-left:1px solid rgba(198,142,60,0.3); padding:25px; overflow-y:auto;"><div style="display:flex; justify-content:space-between;"><h3><i class="fas fa-shopping-cart"></i> Cart</h3><button id="closeCart" style="background:none; border:none; color:white; font-size:24px;">&times;</button></div><div id="cartItems"></div><hr><p><strong>Total: R<span id="cartTotal">0</span></strong></p><button id="checkoutBtn" class="btn-primary" style="width:100%; margin-top:18px;">Proceed to Checkout</button></div>
+
+  <section id="booking">
+    <div class="container">
+      <h2 class="section-title">Select Date & Book a Cut</h2>
+      <div id="loginPrompt" class="login-prompt" style="display: none;"><p><i class="fas fa-lock"></i> Please Login or Sign Up to book.</p><button id="promptLoginBtn" class="btn-primary">Login / Sign Up</button></div>
+      <div id="bookingFormContainer" style="display: none;">
+        <div class="booking-form">
+          <div id="calendarContainer" style="margin-bottom: 30px;"><div id="fullYearCalendar"></div></div>
+          <form id="checkoutForm">
+            <div class="form-row">
+              <div class="form-group"><label>Full Name</label><input type="text" id="fullName" required></div>
+              <div class="form-group"><label>Email Address</label><input type="email" id="email" readonly style="background:#1a1a1a;"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Campus (UCT/CPUT/UWC)</label><input type="text" id="location" required></div>
+              <div class="form-group"><label>Room Number</label><input type="text" id="roomNumber" required></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Student Status</label><select id="studentStatus"><option value="Yes">Yes</option><option value="No">No</option></select></div>
+              <div class="form-group"><label>Select Service</label><select id="serviceSelect"></select></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Choose Barber</label><select id="barberSelect"></select></div>
+              <div class="form-group"><label>Selected Date</label><input type="text" id="selectedDate" placeholder="Click on a date above" readonly required></div>
+            </div>
+            <div class="form-group"><label>Select Time Slot</label><select id="timeSlot" required><option value="">Choose a time</option></select></div>
+            <button type="submit" class="btn-primary" style="width:100%;"><i class="fas fa-check-circle"></i> Confirm Booking (R<span id="totalAmountSpan">0</span>)</button>
+          </form>
+          <div id="bookingMsg" style="margin-top:20px; text-align:center;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="dashboard"><div class="container"><h2 class="section-title">Client Portal</h2><div id="clientDashboard" class="dashboard-card"><p><i class="fas fa-user-circle"></i> Login to view your dashboard.</p></div></div></section>
+  <section id="payment"><div class="container"><h2 class="section-title">Secure Payment</h2><div class="payment-info-card" style="background:#0B0B0B; border-radius:32px; padding:30px;"><p><strong><i class="fas fa-university"></i> EFT Details:</strong></p><p>FNB | Madiba Studios | 62840951234 | 250655<br>Reference: Your Email</p></div></div></section>
+</main>
+
+<!-- COMPLETE ADMIN DASHBOARD -->
+<div id="adminDashboard" class="admin-only">
+  <div class="admin-panel">
+    <button id="closeAdmin" class="close-admin">&times;</button>
+    <h2><i class="fas fa-shield-alt"></i> Administrator Dashboard</h2>
+    <p style="color: #aaa; margin-bottom: 20px;">Welcome back, Administrator. Here's your business overview.</p>
+    
+    <div class="admin-stats">
+      <div class="admin-stat-card"><h3 id="adminTotalBookings">0</h3><p>Total Bookings</p></div>
+      <div class="admin-stat-card"><h3 id="adminTotalUsers">0</h3><p>Registered Users</p></div>
+      <div class="admin-stat-card"><h3 id="adminTodayBookings">0</h3><p>Today's Bookings</p></div>
+      <div class="admin-stat-card"><h3 id="adminRevenue">0</h3><p>Revenue (R)</p></div>
+    </div>
+    
+    <div class="charts-container">
+      <div class="chart-card"><canvas id="bookingsChart"></canvas></div>
+      <div class="chart-card"><canvas id="revenueChart"></canvas></div>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <button id="refreshAdminData" class="btn-primary"><i class="fas fa-sync-alt"></i> Refresh Data</button>
+      <button id="exportBookingsBtn" class="btn-outline" style="margin-left: 12px;"><i class="fas fa-download"></i> Export Bookings</button>
+    </div>
+    
+    <h3><i class="fas fa-calendar-check"></i> Manage Bookings</h3>
+    <div class="bookings-table">
+      <table>
+        <thead>
+          <tr><th>Client</th><th>Service</th><th>Barber</th><th>Date</th><th>Time</th><th>Amount</th><th>POP Status</th><th>Action</th></tr>
+        </thead>
+        <tbody id="adminBookingsList"></tbody>
+      </table>
+    </div>
+    
+    <h3 style="margin-top: 35px;"><i class="fas fa-box"></i> Product Orders</h3>
+    <div class="bookings-table">
+      <table>
+        <thead>
+          <tr><th>Customer</th><th>Email</th><th>Items</th><th>Total</th><th>POP Status</th><th>Date</th></tr>
+        </thead>
+        <tbody id="adminOrdersList"></tbody>
+      </table>
+    </div>
+    
+    <h3 style="margin-top: 35px;"><i class="fas fa-users"></i> Registered Users</h3>
+    <div class="bookings-table">
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Membership</th><th>Bookings</th><th>Location</th><th>Room</th></tr>
+        </thead>
+        <tbody id="adminUsersList"></tbody>
+      </table>
+    </div>
+    
+    <h3 style="margin-top: 35px;"><i class="fas fa-cut"></i> Barber Availability</h3>
+    <div id="adminBarbersList" style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px;"></div>
+  </div>
+</div>
+
+<footer><div class="social-icons"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-tiktok"></i></a><a href="#"><i class="fab fa-whatsapp"></i></a></div><div class="footer-copyright">© 2026 MADIBA STUDIOS — CAPE TOWN</div><div class="footer-credit">designed by drixellabs</div></footer>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAAYBiM31WlEXXSANuYGbUsv8obJco1qhQ",
+    authDomain: "madiba-studios.firebaseapp.com",
+    projectId: "madiba-studios",
+    storageBucket: "madiba-studios.firebasestorage.app",
+    messagingSenderId: "329185060386",
+    appId: "1:329185060386:web:d8fa64c95c9c312edd4c7b"
+  };
+  
+  // ========== FIXED EMAIL CONFIGURATION ==========
+  const BOOKING_EMAIL_CONFIG = {
+    serviceId: "service_f50ublr",
+    confirmationTemplateId: "template_5lmzu2j",
+    cancellationTemplateId: "template_y5kelrd",
+    publicKey: "IDqXwetwSYFXwqxQA"
+  };
+  
+  const MERCH_EMAIL_CONFIG = {
+    serviceId: "service_37fqeu8",
+    orderTemplateId: "template_r237z76",
+    publicKey: "Sfqbk3Y4fStY0g6Ej"
+  };
+  
+  const OWNER_EMAIL_CONFIG = {
+    serviceId: "service_37fqeu8",
+    notificationTemplateId: "template_xgy3u38",
+    publicKey: "Sfqbk3Y4fStY0g6Ej"
+  };
+  
+  emailjs.init(BOOKING_EMAIL_CONFIG.publicKey);
+  
+  let db, auth, currentUser = null, isAdminLogged = false;
+  let bookingsChart, revenueChart;
+  let pendingBookingData = null;
+  let pendingProductData = null;
+  
+  let barbers = [
+    { name: "Motheo Mbulawa", img: "https://ik.imagekit.io/cxzgj4jeg/WhatsApp%20Image%202026-04-13%20at%2021.52.27.jpeg", available: true },
+    { name: "Sanele Mabula", img: "https://ik.imagekit.io/cxzgj4jeg/WhatsApp%20Image%202026-04-13%20at%2021.52.28.jpeg", available: true },
+    { name: "Andile Xaba", img: "https://ik.imagekit.io/cxzgj4jeg/WhatsApp%20Image%202026-04-13%20at%2021.52.28.jpeg", available: true }
+  ];
+  
+  async function loadBarberAvailability() {
+    if (!db) return;
+    const snap = await db.collection("settings").doc("barberAvailability").get();
+    if (snap.exists) {
+      const saved = snap.data();
+      barbers.forEach(b => { if (saved[b.name] !== undefined) b.available = saved[b.name]; });
+    }
+    renderBarbers();
+    renderAdminBarbers();
+  }
+  
+  async function saveBarberAvailability() {
+    if (!db) return;
+    const availability = {};
+    barbers.forEach(b => { availability[b.name] = b.available; });
+    await db.collection("settings").doc("barberAvailability").set(availability);
+  }
+  
+  const services = [
+    {name:"Low Bald Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0048.jpg", description:"This cut starts with a very short, shaved fade near the ears and gradually blends up. It's clean, subtle, and low-maintenance."},
+    {name:"Mid Bald Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0041.jpg", description:"A balanced fade that starts halfway up the sides, giving a middle ground between subtle and bold."},
+    {name:"High Bald Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0040.jpg", description:"The fade begins very high on the sides, giving a sharp contrast between the shaved sides and the fuller top."},
+    {name:"High Top Fade", price:80, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0043.jpg", description:"The sides are faded low, but the top is kept long and shaped upward, creating a dramatic, square silhouette."},
+    {name:"Mullet", price:80, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0042.jpg", description:"Short at the front and sides, but long in the back; it's a retro style making a comeback."},
+    {name:"Mohawk", price:140, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0049.jpg", description:"The sides are shaved, leaving a strip of longer hair down the middle, often spiked or styled."},
+    {name:"Buzz Cut", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0047.jpg", description:"A super short, uniform cut all over; it's simple, classic, and easy to maintain."},
+    {name:"Temple Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0045.jpg", description:"The hair at the temples is tapered gradually, giving a subtle, neat finish."},
+    {name:"Mid Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0046.jpg", description:"A gradual fade starting at mid-level, blending smoothly into the top."},
+    {name:"High Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0050.jpg", description:"A sharp, high fade with a distinct separation between the top and sides."},
+    {name:"Trim Alone", price:45, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0047.jpg", description:"A simple, light trim to keep the shape neat without changing length drastically."},
+    {name:"Bald (Chiskop)", price:40, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0041.jpg", description:"Completely shaved head, a bold, low-maintenance look."}
+  ];
+  
+  const products = [
+    {name:"Curl Sponge", price:60, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260413-WA0058.jpg"},
+    {name:"Dermal Roller", price:60, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260413-WA0064.jpg"},
+    {name:"Brush", price:60, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260413-WA0060.jpg"},
+    {name:"Durag", price:60, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260413-WA0059.jpg"},
+    {name:"Curl Glove Sponge", price:60, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260413-WA0057.jpg"},
+    {name:"Wave Cap", price:60, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260413-WA0062.jpg"},
+    {name:"Afro Comb", price:60, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260413-WA0061.jpg"},
+    {name:"Curl Net", price:60, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260413-WA0063.jpg"}
+  ];
+  
+  let cart = [];
+  const timeSlots = Array.from({length: 11}, (_,i) => `${(i+8).toString().padStart(2,'0')}:00`);
+  
+  function renderServices() {
+    const container = document.getElementById("servicesList");
+    container.innerHTML = services.map(s => `<div class="service-card" onclick="selectServiceForBooking('${s.name}', ${s.price})"><img class="service-img" src="${s.img}" onerror="this.src='https://placehold.co/400x220/222/white'"><div class="service-info"><h3>${s.name}</h3><div class="price">R${s.price}</div><p class="service-description">${s.description}</p><button class="btn-outline addToCartBtn" data-name="${s.name}" data-price="${s.price}" data-type="service" onclick="event.stopPropagation()"><i class="fas fa-cart-plus"></i> Add to Cart</button></div></div>`).join('');
+    document.querySelectorAll('.addToCartBtn').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); addToCart({name: btn.dataset.name, price: parseInt(btn.dataset.price), type: 'service'}); }));
+  }
+  
+  function renderBarbers() {
+    const container = document.getElementById("barbersGrid");
+    container.innerHTML = barbers.map(b => `<div class="barber-card"><img class="barber-img" src="${b.img}" onerror="this.src='https://placehold.co/150x150/222/white?text=${b.name.charAt(0)}'"><h3 class="barber-name">${b.name}</h3><span class="barber-status ${b.available ? 'status-available' : 'status-unavailable'}">${b.available ? 'Available' : 'Unavailable'}</span></div>`).join('');
+    const select = document.getElementById("barberSelect");
+    select.innerHTML = barbers.filter(b => b.available).map(b => `<option value="${b.name}">✂️ ${b.name}</option>`).join('');
+    if (select.innerHTML === '') select.innerHTML = '<option disabled>No barbers available</option>';
+  }
+  
+  function renderAdminBarbers() {
+    const container = document.getElementById("adminBarbersList");
+    container.innerHTML = barbers.map(b => `<div style="background:#111; padding:15px; border-radius:20px; text-align:center; min-width:150px;"><strong>${b.name}</strong><br><span style="color:${b.available ? '#10b981' : '#dc2626'}">${b.available ? 'Available' : 'Unavailable'}</span><br><button onclick="toggleBarberAvailability('${b.name}')" class="btn-outline" style="margin-top:10px; padding:4px 12px;">Toggle</button></div>`).join('');
+  }
+  
+  window.toggleBarberAvailability = async (barberName) => {
+    const barber = barbers.find(b => b.name === barberName);
+    if (barber) {
+      barber.available = !barber.available;
+      renderBarbers();
+      renderAdminBarbers();
+      await saveBarberAvailability();
+      showNotif(`${barber.name} is now ${barber.available ? 'Available' : 'Unavailable'} for customers`);
+    }
+  };
+  
+  function renderProducts() {
+    const container = document.getElementById("productList");
+    container.innerHTML = products.map(p => `<div class="product-card"><img class="product-img" src="${p.img}" onerror="this.src='https://placehold.co/300x190/222/white'"><div class="product-info"><h3>${p.name}</h3><div class="price">R${p.price}</div><button class="btn-outline addProductBtn" data-name="${p.name}" data-price="${p.price}" data-type="product"><i class="fas fa-cart-plus"></i> Add to Cart</button></div></div>`).join('');
+    document.querySelectorAll('.addProductBtn').forEach(btn => btn.addEventListener('click', () => addToCart({name: btn.dataset.name, price: parseInt(btn.dataset.price), type: 'product'})));
+  }
+  
+  function renderMemberships() {
+    document.getElementById("membershipGrid").innerHTML = `
+      <div class="membership-card silver"><h3>🟢 Silver Membership</h3><div class="price" style="font-size:1.3rem;">New Clients (0-2 bookings)</div><p style="font-size:0.85rem; margin:15px 0;">This tier is assigned to new customers beginning their journey with Madiba Studios. It provides full access to our core grooming services while introducing clients to our standard of quality and professionalism.</p><ul class="membership-benefits"><li><i class="fas fa-check-circle"></i> Core grooming services access</li><li><i class="fas fa-check-circle"></i> Standard quality guarantee</li></ul><span class="badge">Silver Status</span></div>
+      <div class="membership-card gold"><h3>🟡 Gold Membership</h3><div class="price" style="font-size:1.3rem;">Frequent Clients (3-5 bookings)</div><p style="font-size:0.85rem; margin:15px 0;">Gold status is awarded to clients who consistently book appointments and engage with our services. This tier reflects growing loyalty and includes benefits such as priority booking access, occasional offers, and enhanced service recognition.</p><ul class="membership-benefits"><li><i class="fas fa-check-circle"></i> Priority booking access</li><li><i class="fas fa-check-circle"></i> Exclusive offers & discounts</li></ul><span class="badge">Gold Status</span></div>
+      <div class="membership-card platinum"><h3>🔴 Platinum Membership</h3><div class="price" style="font-size:1.3rem;">Elite Members (6+ bookings)</div><p style="font-size:0.85rem; margin:15px 0;">Our highest tier, Platinum Membership, is reserved for clients with a strong and consistent booking history. Platinum members enjoy premium benefits, including priority scheduling, exclusive discounts, complimentary services, and access to special prize giveaways as part of our ongoing client appreciation initiatives.</p><ul class="membership-benefits"><li><i class="fas fa-check-circle"></i> Priority scheduling</li><li><i class="fas fa-check-circle"></i> Exclusive discounts & complimentary services</li><li><i class="fas fa-check-circle"></i> Special prize giveaways</li></ul><span class="badge">Platinum Status</span></div>`;
+  }
+  
+  function selectServiceForBooking(name, price) {
+    document.getElementById("serviceSelect").value = name;
+    scrollToSection('booking');
+    showNotif(`Selected ${name} - R${price}. Pick a date.`);
+  }
+  
+  function addToCart(item) { 
+    cart.push(item); 
+    updateCartUI(); 
+    updateServiceDropdownFromCart();
+    showNotif(`Added ${item.name} to cart`);
+  }
+  
+  function updateServiceDropdownFromCart() {
+    const servicesInCart = cart.filter(item => item.type === 'service');
+    const select = document.getElementById("serviceSelect");
+    if (servicesInCart.length > 0) {
+      select.innerHTML = servicesInCart.map(s => `<option value="${s.name}" selected>${s.name} — R${s.price}</option>`).join('');
+      if (servicesInCart.length === 1) select.value = servicesInCart[0].name;
+    } else {
+      select.innerHTML = services.map(s => `<option value="${s.name}">${s.name} — R${s.price}</option>`).join('');
+    }
+  }
+  
+  function updateCartUI() { 
+    document.getElementById("cartCount").innerText = cart.length; 
+    let total = cart.reduce((s,i)=>s+i.price,0); 
+    document.getElementById("cartTotal").innerText = total; 
+    document.getElementById("totalAmountSpan").innerText = total; 
+    document.getElementById("cartItems").innerHTML = cart.map((item,idx)=>`<div class="cart-item"><span>${item.name} - R${item.price}</span><button onclick="removeFromCart(${idx})" style="background:none; border:none; color:#ff4444;"><i class="fas fa-trash"></i></button></div>`).join('') || "<p>Cart empty</p>"; 
+  }
+  window.removeFromCart = (idx) => { 
+    cart.splice(idx,1); 
+    updateCartUI(); 
+    updateServiceDropdownFromCart();
+  };
+  
+  let calendarInstance = null;
+  document.addEventListener('DOMContentLoaded', () => {
+    let calendarEl = document.getElementById('fullYearCalendar');
+    if(calendarEl && !calendarInstance) {
+      calendarInstance = new FullCalendar.Calendar(calendarEl, { 
+        initialView: 'dayGridMonth', 
+        headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth' }, 
+        height: 'auto', 
+        dateClick: function(info) { 
+          selectedDate = info.dateStr; 
+          document.getElementById("selectedDate").value = selectedDate; 
+          updateAvailableSlots(); 
+          showNotif(`Date selected: ${selectedDate}`); 
+        } 
+      });
+      calendarInstance.render();
+    }
+  });
+  
+  let selectedDate = null;
+  async function fetchBookings() { if(!db) return []; const snap = await db.collection("bookings").get(); return snap.docs.map(d=>({id:d.id,...d.data()})); }
+  async function fetchUsers() { if(!db) return []; const snap = await db.collection("users").get(); return snap.docs.map(d=>({id:d.id,...d.data()})); }
+  async function fetchProductOrders() { if(!db) return []; const snap = await db.collection("productOrders").get(); return snap.docs.map(d=>({id:d.id,...d.data()})); }
+  
+  async function updateAvailableSlots() { 
+    const date = document.getElementById("selectedDate").value, barber = document.getElementById("barberSelect").value; 
+    if(!date || !barber) return; 
+    const bookings = await fetchBookings(); 
+    const booked = bookings.filter(b => b.date === date && b.barber === barber).map(b=>b.timeSlot); 
+    const available = timeSlots.filter(s=>!booked.includes(s)); 
+    const slotSelect = document.getElementById("timeSlot");
+    slotSelect.innerHTML = available.length ? available.map(s=>`<option value="${s}">${s}</option>`).join('') : '<option disabled>No slots available</option>';
+  }
+  document.getElementById("barberSelect")?.addEventListener("change", updateAvailableSlots);
+  
+  function showNotif(msg, isError=false) { let d=document.createElement('div'); d.className='notification'; d.innerHTML=`<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${msg}`; document.body.appendChild(d); setTimeout(()=>d.remove(),3000); }
+  
+ 
+// ========== EMAILJS CONFIG ==========
+const EMAILJS = {
+  CUTS: {
+    PUBLIC_KEY: "IDqXwetwSYFXwqxQA",
+    SERVICE_ID: "service_f50ublr"
+  },
+  MERCH: {
+    PUBLIC_KEY: "Sfqbk3Y4fStY0g6Ej",
+    SERVICE_ID: "service_37fqeu8"
+  }
+};
+
+// ========== SAFE SINGLE INIT CONTROLLER ==========
+let currentEmailAccount = null;
+
+function setEmailAccount(type) {
+  if (currentEmailAccount === type) return; // prevents re-init spam
+
+  if (type === "CUTS") {
+    emailjs.init(EMAILJS.CUTS.PUBLIC_KEY);
+    currentEmailAccount = "CUTS";
+  } else if (type === "MERCH") {
+    emailjs.init(EMAILJS.MERCH.PUBLIC_KEY);
+    currentEmailAccount = "MERCH";
+  }
+}
+
+// ========== CUTS: CUSTOMER CONFIRMATION ==========
+async function sendBookingConfirmationToCustomer(bookingDetails) {
+  try {
+    setEmailAccount("CUTS");
+
+    const result = await emailjs.send(
+      EMAILJS.CUTS.SERVICE_ID,
+      "template_5lmzu2j",
+      {
+        email: bookingDetails.email,
+        name: bookingDetails.fullName,
+        service: bookingDetails.service,
+        barber: bookingDetails.barber,
+        date: bookingDetails.date,
+        time: bookingDetails.timeSlot,
+        location: bookingDetails.location,
+        room: bookingDetails.room,
+        total: bookingDetails.totalAmount
+      }
+    );
+
+    console.log("✅ CUTS confirmation sent:", result);
+    return true;
+
+  } catch (e) {
+    console.error("❌ CUTS confirmation error:", e);
+    showNotif("Email failed but booking saved", true);
+    return false;
+  }
+}
+
+// ========== CUTS: CANCELLATION ==========
+async function sendCancellationEmailToCustomer(bookingDetails) {
+  try {
+    setEmailAccount("CUTS");
+
+    const result = await emailjs.send(
+      EMAILJS.CUTS.SERVICE_ID,
+      "template_y5kelrd",
+      {
+        name: bookingDetails.fullName,
+        email: bookingDetails.email,
+        service: bookingDetails.service,
+        barber: bookingDetails.barber,
+        date: bookingDetails.date
+      }
+    );
+
+    console.log("✅ CUTS cancellation sent:", result);
+    return true;
+
+  } catch (e) {
+    console.error("❌ CUTS cancellation error:", e);
+    return false;
+  }
+}
+
+// ========== MERCH: CUSTOMER ORDER ==========
+async function sendMerchOrderEmail(orderDetails) {
+  try {
+    setEmailAccount("MERCH");
+
+    const productNames = (orderDetails.items || [])
+      .map(item => item.name)
+      .join(", ");
+
+    const result = await emailjs.send(
+      EMAILJS.MERCH.SERVICE_ID,
+      "template_r237z76",
+      {
+        email: orderDetails.email,
+        name: orderDetails.customerName,
+        product: productNames,
+        quantity: orderDetails.items.length,
+        total: orderDetails.totalAmount,
+        location: orderDetails.location,
+        room: orderDetails.room
+      }
+    );
+
+    console.log("✅ MERCH order sent:", result);
+    return true;
+
+  } catch (e) {
+    console.error("❌ MERCH order error:", e);
+    showNotif("Email failed but order saved", true);
+    return false;
+  }
+}
+
+// ========== OWNER NOTIFICATION (CUTS ONLY) ==========
+async function sendBookingNotificationToOwner(bookingDetails) {
+  try {
+    setEmailAccount("CUTS");
+
+    const TEMPLATE_ID = "template_xgy3u38";
+
+    const result = await emailjs.send(
+      EMAILJS.CUTS.SERVICE_ID,
+      TEMPLATE_ID,
+      {
+        to_email: "motheo@madibastudios.co.za",
+        name: bookingDetails.fullName,
+        email: bookingDetails.email,
+        service: bookingDetails.service,
+        barber: bookingDetails.barber,
+        date: bookingDetails.date,
+        time: bookingDetails.timeSlot,
+        location: bookingDetails.location,
+        room: bookingDetails.room
+      }
+    );
+
+    console.log("✅ OWNER notification sent:", result);
+    return true;
+
+  } catch (e) {
+    console.error("❌ OWNER notification error FULL:", e);
+    return false;
+  }
+}
+  
+  function openProductOrderForm() {
+    if (!currentUser) {
+      showNotif('Please login first to place an order', true);
+      showAuthModal('login');
+      return;
+    }
+    if (cart.length === 0) {
+      showNotif('Your cart is empty', true);
+      return;
+    }
+    const onlyProducts = cart.every(item => item.type === 'product');
+    if (!onlyProducts) {
+      showNotif('Please remove haircut services from cart to place a product order.', true);
+      return;
+    }
+    document.getElementById('orderFullName').value = currentUser.displayName || '';
+    document.getElementById('orderEmail').value = currentUser.email;
+    const itemsHtml = cart.map(item => `<div>${item.name} - R${item.price}</div>`).join('');
+    document.getElementById('orderItemsList').innerHTML = itemsHtml;
+    const total = cart.reduce((s,i)=>s+i.price,0);
+    document.getElementById('orderTotalAmount').innerText = total;
+    document.getElementById('productOrderModal').style.display = 'flex';
+  }
+  
+  document.getElementById('productOrderForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fullName = document.getElementById('orderFullName').value;
+    const email = document.getElementById('orderEmail').value;
+    const location = document.getElementById('orderLocation').value;
+    const room = document.getElementById('orderRoom').value;
+    const phone = document.getElementById('orderPhone').value;
+    if (!fullName || !email || !location || !room) {
+      showNotif('Please fill all required fields', true);
+      return;
+    }
+    const total = cart.reduce((s,i)=>s+i.price,0);
+    pendingProductData = {
+      fullName, email, location, room, phone,
+      items: cart,
+      totalAmount: total,
+      createdAt: new Date().toISOString(),
+      popStatus: 'Pending'
+    };
+    document.getElementById('productOrderModal').style.display = 'none';
+    document.getElementById('paymentModalTitle').innerText = 'Complete Product Order Payment';
+    document.getElementById('paymentModalText').innerHTML = '<strong>Bank:</strong> FNB<br><strong>Account:</strong> Madiba Studios<br><strong>Number:</strong> 62840951234<br><strong>Branch:</strong> 250655<br><strong>Reference:</strong> Your Email';
+    document.getElementById('paymentModal').style.display = 'flex';
+  });
+  
+  document.getElementById('closeProductOrderModal')?.addEventListener('click', () => {
+    document.getElementById('productOrderModal').style.display = 'none';
+  });
+  
+  document.getElementById("checkoutForm")?.addEventListener("submit", async(e)=>{ 
+    e.preventDefault(); 
+    if (!currentUser) { showNotif('Please login first', true); return; } 
+    const fullName = document.getElementById("fullName").value, email = document.getElementById("email").value, location = document.getElementById("location").value, room = document.getElementById("roomNumber").value, studentStatus = document.getElementById("studentStatus").value, service = document.getElementById("serviceSelect").value, barber = document.getElementById("barberSelect").value, date = document.getElementById("selectedDate").value, timeSlot = document.getElementById("timeSlot").value; 
+    if(!fullName || !email || !location || !room || !date || !timeSlot) return showNotif("All fields required", true); 
+    const bookingsNow = await fetchBookings(); 
+    if(bookingsNow.some(b=>b.barber===barber && b.date===date && b.timeSlot===timeSlot)) { showNotif("Slot already booked. Select another time.", true); return; } 
+    let totalCart = cart.reduce((s,i)=>s+i.price,0); 
+    const userRef = db.collection('users').doc(email); 
+    const userDoc = await userRef.get(); 
+    let totalBookingsUser = (userDoc.data()?.totalBookings || 0) + 1; 
+    await userRef.set({ fullName, email, location, roomNumber:room, studentStatus, totalBookings: totalBookingsUser, membership: totalBookingsUser <=2 ? 'Silver' : totalBookingsUser <=5 ? 'Gold' : 'Platinum' }, { merge: true }); 
+    pendingBookingData = { fullName, email, service, barber, date, timeSlot, location, room, studentStatus, cartItems: cart, totalAmount: totalCart, createdAt: new Date().toISOString(), popStatus: 'Pending' }; 
+    document.getElementById('paymentModalTitle').innerText = 'Complete Booking Payment';
+    document.getElementById('paymentModalText').innerHTML = '<strong>Bank:</strong> FNB<br><strong>Account:</strong> Madiba Studios<br><strong>Number:</strong> 62840951234<br><strong>Branch:</strong> 250655<br><strong>Reference:</strong> Your Email';
+    document.getElementById('paymentModal').style.display = 'flex';
+    updateAvailableSlots(); updateStats(); 
+    document.getElementById("checkoutForm").reset(); document.getElementById("selectedDate").value = ""; document.getElementById("timeSlot").innerHTML = '<option value="">Select time</option>'; 
+  });
+  
+  let uploadedPOPs = {};
+  
+  document.getElementById('popUploadArea')?.addEventListener('click', () => document.getElementById('popFile').click());
+  document.getElementById('popFile')?.addEventListener('change', (e) => { 
+    if(e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const popId = Date.now().toString();
+        uploadedPOPs[popId] = { name: file.name, data: event.target.result, type: file.type };
+        document.getElementById('popStatus').innerHTML = `✅ Uploaded: ${file.name}`;
+        window.currentPOPId = popId;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+  
+  window.viewPOP = (id, type) => {
+    if (uploadedPOPs[id]) {
+      const link = document.createElement('a');
+      link.href = uploadedPOPs[id].data;
+      link.download = uploadedPOPs[id].name;
+      link.click();
+    } else {
+      showNotif('POP file not found.', true);
+    }
+  };
+  
+  document.getElementById('submitPaymentBtn')?.addEventListener('click', async () => {
+    if (pendingBookingData) {
+      const bookingWithPOP = {...pendingBookingData, popStatus: 'Uploaded', popFileId: window.currentPOPId};
+      await db.collection('bookings').add(bookingWithPOP);
+      await sendBookingConfirmationToCustomer(pendingBookingData);
+      await sendBookingNotificationToOwner(pendingBookingData);
+      showNotif('Booking confirmed! Check your email for confirmation.');
+      document.getElementById('paymentModal').style.display = 'none';
+      const serviceItems = cart.filter(i => i.type === 'service');
+      cart = serviceItems;
+      updateCartUI();
+      updateServiceDropdownFromCart();
+      updateStats();
+      if(currentUser) loadDashboard(currentUser.email);
+      pendingBookingData = null;
+    } else if (pendingProductData) {
+      const orderWithPOP = {...pendingProductData, popStatus: 'Uploaded', popFileId: window.currentPOPId};
+      await db.collection('productOrders').add(orderWithPOP);
+      await sendMerchOrderEmail(
+        pendingProductData.email, 
+        pendingProductData.fullName, 
+        pendingProductData.items, 
+        pendingProductData.totalAmount,
+        pendingProductData.location,
+        pendingProductData.room
+      );
+      showNotif('Order placed! Check your email for confirmation.');
+      document.getElementById('paymentModal').style.display = 'none';
+      const productItems = cart.filter(i => i.type === 'product');
+      cart = productItems;
+      updateCartUI();
+      pendingProductData = null;
+    }
+    document.getElementById('popStatus').innerHTML = '';
+    document.getElementById('popFile').value = '';
+    window.currentPOPId = null;
+  });
+  
+  window.cancelBooking = async (id) => { 
+    const bookingRef = db.collection('bookings').doc(id);
+    const booking = (await bookingRef.get()).data();
+    await bookingRef.delete();
+    if (booking && booking.email) {
+      await sendCancellationEmailToCustomer(booking.email, booking.fullName, booking.service);
+    }
+    loadAdminPanel(); 
+    updateStats(); 
+    showNotif('Booking cancelled and email sent to customer');
+  };
+  
+  function getAIResponse(msg) {
+    const m = msg.toLowerCase();
+    if(m.includes('price') || m.includes('cost')) return "Our haircut prices: Low/Mid/High Bald Fade, Temple/Mid/High Taper Fade, Buzz Cut are R70 each. High Top Fade and Mullet are R80. Mohawk is R140. Trim is R45. Bald is R40. All merch items are R60 each.";
+    if(m.includes('book') || m.includes('appointment')) return "To book: 1) Login, 2) Go to Booking section, 3) Select date on calendar, 4) Choose service & barber, 5) Pick time, 6) Fill details, 7) Pay via EFT, upload POP.";
+    if(m.includes('barber')) return "Our barbers: Motheo Mbulawa (founder), Sanele Mabula, Andile Xaba.";
+    if(m.includes('product') || m.includes('merch')) return "Add products to cart, checkout, fill delivery details, pay via EFT, upload POP.";
+    if(m.includes('payment') || m.includes('eft')) return "EFT: FNB, Acc: 62840951234, Branch: 250655. Reference: Your email. After payment, upload POP.";
+    if(m.includes('membership')) return "Tiers: Silver (0-2 bookings), Gold (3-5 bookings), Platinum (6+ bookings).";
+    return "I can help with bookings, prices, barbers, products, payments, membership. What do you need?";
+  }
+  
+  document.getElementById('chatToggle')?.addEventListener('click', () => { const w = document.getElementById('chatWindow'); w.style.display = w.style.display === 'flex' ? 'none' : 'flex'; });
+  document.getElementById('closeChat')?.addEventListener('click', () => document.getElementById('chatWindow').style.display = 'none');
+  document.getElementById('sendChat')?.addEventListener('click', () => { 
+    const input = document.getElementById('chatInput'); const msg = input.value.trim(); if(!msg) return; 
+    const messagesDiv = document.getElementById('chatMessages'); 
+    messagesDiv.innerHTML += `<div class="chat-message user"><div class="chat-bubble">${msg}</div></div>`; 
+    input.value = ''; 
+    const reply = getAIResponse(msg);
+    setTimeout(() => { messagesDiv.innerHTML += `<div class="chat-message bot"><div class="chat-bubble">${reply}</div></div>`; messagesDiv.scrollTop = messagesDiv.scrollHeight; }, 300);
+  });
+  
+  async function sendPasswordReset(email) { try { await auth.sendPasswordResetEmail(email); showNotif(`Reset email sent to ${email}`); document.getElementById('resetModal').style.display = 'none'; } catch(e) { document.getElementById('resetError').innerText = e.message; } }
+  async function changeEmail(newEmail, password) { 
+    if (!currentUser) return showNotif('Login first', true);
+    try { const cred = firebase.auth.EmailAuthProvider.credential(currentUser.email, password); await currentUser.reauthenticateWithCredential(cred); await currentUser.updateEmail(newEmail); showNotif(`Email changed to ${newEmail}. Please sign in again.`); await auth.signOut(); document.getElementById('changeEmailModal').style.display = 'none'; } 
+    catch(e) { document.getElementById('changeEmailError').innerText = e.message; }
+  }
+  async function createAdminUser() { 
+    try { await auth.createUserWithEmailAndPassword("admin@madibastudios.co.za", "MadibaAdmin2026!"); await db.collection('users').doc("admin@madibastudios.co.za").set({ fullName: "Administrator", email: "admin@madibastudios.co.za", isAdmin: true }, { merge: true }); } catch(e) {} 
+  }
+  async function checkAndShowAdminDashboard(user) { if (user && user.email === "admin@madibastudios.co.za") { isAdminLogged = true; document.getElementById('adminDashboard').style.display = 'block'; await loadAdminPanel(); showNotif('Admin dashboard activated'); } }
+  
+  async function loadAdminPanel() {
+    if (!isAdminLogged) return;
+    const bookings = await fetchBookings();
+    const users = await fetchUsers();
+    const orders = await fetchProductOrders();
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('adminTotalBookings').innerText = bookings.length;
+    document.getElementById('adminTotalUsers').innerText = users.length;
+    document.getElementById('adminTodayBookings').innerText = bookings.filter(b => b.date === today).length;
+    document.getElementById('adminRevenue').innerText = bookings.reduce((s,b)=>s+(b.totalAmount||0),0);
+    
+    const monthlyData = [0,0,0,0,0,0,0,0,0,0,0,0];
+    bookings.forEach(b => { if(b.createdAt) monthlyData[new Date(b.createdAt).getMonth()]++; });
+    if(bookingsChart) bookingsChart.destroy();
+    bookingsChart = new Chart(document.getElementById('bookingsChart'), { type: 'bar', data: { labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], datasets: [{ label: 'Bookings', data: monthlyData, backgroundColor: '#C68E3C' }] }, options: { responsive: true, plugins: { legend: { labels: { color: 'white' } } } } });
+    
+    const revenueData = bookings.map(b => b.totalAmount || 0);
+    if(revenueChart) revenueChart.destroy();
+    revenueChart = new Chart(document.getElementById('revenueChart'), { type: 'line', data: { labels: bookings.map((_,i)=>i+1), datasets: [{ label: 'Revenue', data: revenueData, borderColor: '#C68E3C', fill: false }] }, options: { responsive: true, plugins: { legend: { labels: { color: 'white' } } } } });
+    
+    document.getElementById('adminBookingsList').innerHTML = bookings.map(b => `<tr><td style="padding:12px;">${b.fullName}</td><td style="padding:12px;">${b.service}</td><td style="padding:12px;">${b.barber}</td><td style="padding:12px;">${b.date}</td><td style="padding:12px;">${b.timeSlot}</td><td style="padding:12px;">R${b.totalAmount||0}</td><td style="padding:12px;"><span class="pop-badge ${b.popStatus === 'Uploaded' ? 'pop-uploaded' : 'pop-pending'}" onclick="viewPOP('${b.popFileId || b.id}', 'booking')">${b.popStatus || 'Pending'}</span></td><td style="padding:12px;"><button onclick="cancelBooking('${b.id}')" class="btn-danger">Cancel</button></td></tr>`).join('') || '<tr><td colspan="8">No bookings</td></tr>';
+    
+    document.getElementById('adminOrdersList').innerHTML = orders.map(o => `<tr><td style="padding:12px;">${o.fullName}</td><td style="padding:12px;">${o.email}</td><td style="padding:12px;">${o.items.map(i=>i.name).join(', ')}</td><td style="padding:12px;">R${o.totalAmount}</td><td style="padding:12px;"><span class="pop-badge ${o.popStatus === 'Uploaded' ? 'pop-uploaded' : 'pop-pending'}" onclick="viewPOP('${o.popFileId || o.id}', 'order')">${o.popStatus || 'Pending'}</span></td><td style="padding:12px;">${new Date(o.createdAt).toLocaleDateString()}</td></tr>`).join('') || '<tr><td colspan="6">No orders</td></tr>';
+    
+    document.getElementById('adminUsersList').innerHTML = users.map(u => `<tr><td style="padding:12px;">${u.fullName}</td><td style="padding:12px;">${u.email}</td><td style="padding:12px;">${u.membership || 'Silver'}</td><td style="padding:12px;">${u.totalBookings || 0}</td><td style="padding:12px;">${u.location || '-'}</td><td style="padding:12px;">${u.roomNumber || '-'}</td></tr>`).join('') || '<tr><td colspan="6">No users</td></tr>';
+    renderAdminBarbers();
+  }
+  
+  function showAuthModal(mode = 'login') { 
+    document.getElementById('authTitle').innerText = mode === 'login' ? 'Login' : 'Sign Up';
+    document.getElementById('authSubmitBtn').innerHTML = mode === 'login' ? '<i class="fas fa-sign-in-alt"></i> Login' : '<i class="fas fa-user-plus"></i> Sign Up';
+    document.getElementById('authSwitch').innerHTML = mode === 'login' ? `Don't have an account? <span>Sign Up</span>` : `Already have an account? <span>Login</span>`;
+    document.getElementById('forgotPasswordContainer').style.display = mode === 'login' ? 'block' : 'none';
+    document.getElementById('authModal').style.display = 'flex';
+    window.currentAuthMode = mode;
+  }
+  async function handleAuth() { 
+    const email = document.getElementById('authEmail').value, password = document.getElementById('authPassword').value;
+    if (!email || !password) { document.getElementById('authError').innerText = 'Please fill all fields'; return; }
+    try { 
+      if (window.currentAuthMode === 'login') { await auth.signInWithEmailAndPassword(email, password); showNotif('Logged in!'); } 
+      else { await auth.createUserWithEmailAndPassword(email, password); await db.collection('users').doc(email).set({ fullName: email.split('@')[0], email, totalBookings: 0, membership: 'Silver', createdAt: new Date().toISOString() }); showNotif('Account created!'); }
+      document.getElementById('authModal').style.display = 'none';
+    } catch(e) { document.getElementById('authError').innerText = e.message; }
+  }
+  async function googleSignIn() { try { const provider = new firebase.auth.GoogleAuthProvider(); const result = await auth.signInWithPopup(provider); const user = result.user; const userRef = db.collection('users').doc(user.email); if (!(await userRef.get()).exists) await userRef.set({ fullName: user.displayName, email: user.email, totalBookings: 0, membership: 'Silver', createdAt: new Date().toISOString() }); showNotif(`Welcome ${user.displayName}!`); document.getElementById('authModal').style.display = 'none'; } catch(e) { showNotif(e.message, true); } }
+  function updateUIForUser(user) { 
+    const loginBtn = document.getElementById('showLoginBtn'), signupBtn = document.getElementById('showSignupBtn'), userInfoDiv = document.getElementById('userInfo'), bookingContainer = document.getElementById('bookingFormContainer'), loginPrompt = document.getElementById('loginPrompt');
+    if (user) {
+      loginBtn.style.display = 'none'; signupBtn.style.display = 'none'; userInfoDiv.style.display = 'block';
+      document.getElementById('userName').innerText = user.displayName || user.email.split('@')[0];
+      document.getElementById('userAvatar').src = user.photoURL || `https://ui-avatars.com/api/?background=ffffff&color=000&name=${(user.displayName || user.email)[0]}`;
+      document.getElementById('email').value = user.email; document.getElementById('fullName').value = user.displayName || '';
+      bookingContainer.style.display = 'block'; loginPrompt.style.display = 'none';
+      loadDashboard(user.email); checkAndShowAdminDashboard(user);
+    } else {
+      loginBtn.style.display = 'flex'; signupBtn.style.display = 'flex'; userInfoDiv.style.display = 'none';
+      bookingContainer.style.display = 'none'; loginPrompt.style.display = 'block';
+      document.getElementById('clientDashboard').innerHTML = '<p><i class="fas fa-user-circle"></i> Login to view your dashboard.</p>';
+    }
+  }
+  async function logout() { await auth.signOut(); showNotif('Logged out'); document.getElementById('adminDashboard').style.display = 'none'; isAdminLogged = false; }
+  async function loadDashboard(email) { 
+    const userDoc = await db.collection('users').doc(email).get(); if(!userDoc.exists) return;
+    const data = userDoc.data();
+    const bookingsSnap = await db.collection('bookings').where('email','==',email).get();
+    let history = bookingsSnap.docs.map(d=>`<div class="booking-history-item"><i class="fas fa-cut"></i> ${d.data().service} | ${d.data().date} ${d.data().timeSlot} | R${d.data().totalAmount||0} | POP: ${d.data().popStatus || 'Pending'}</div>`).join('');
+    document.getElementById('clientDashboard').innerHTML = `<div><h3><i class="fas fa-user-circle"></i> ${data.fullName}</h3><span class="badge"><i class="fas fa-star"></i> ${data.membership} Member</span><p><i class="fas fa-map-marker-alt"></i> ${data.location || 'Set location'} | <i class="fas fa-door-open"></i> Room ${data.roomNumber || 'N/A'}</p><h4>Booking History</h4>${history || '<p>No bookings yet</p>'}</div>`;
+  }
+  
+  async function updateStats() { if(!db) return; const bookings=await fetchBookings(); const usersSnap=await db.collection('users').get(); document.getElementById('statBookings').innerText=bookings.length; document.getElementById('statUsers').innerText=usersSnap.size; }
+  
+  function showHome() { 
+    document.getElementById('about').style.display = 'none'; 
+    document.getElementById('story').style.display = 'none'; 
+    document.getElementById('services').style.display = 'block'; 
+    document.getElementById('products').style.display = 'block'; 
+    document.getElementById('membership').style.display = 'block'; 
+    document.getElementById('booking').style.display = 'block'; 
+    document.getElementById('dashboard').style.display = 'block'; 
+    document.getElementById('payment').style.display = 'block'; 
+    document.querySelector('.barbers-section').style.display = 'block'; 
+    document.getElementById('hero').scrollIntoView({ behavior: 'smooth' }); 
+  }
+  function showAbout() { 
+    document.getElementById('about').style.display = 'block'; 
+    document.getElementById('story').style.display = 'none'; 
+    document.getElementById('services').style.display = 'none'; 
+    document.getElementById('products').style.display = 'none'; 
+    document.getElementById('membership').style.display = 'none'; 
+    document.getElementById('booking').style.display = 'none'; 
+    document.getElementById('dashboard').style.display = 'none'; 
+    document.getElementById('payment').style.display = 'none'; 
+    document.querySelector('.barbers-section').style.display = 'none'; 
+    document.getElementById('about').scrollIntoView({ behavior: 'smooth' }); 
+  }
+  function showStory() { 
+    document.getElementById('about').style.display = 'none'; 
+    document.getElementById('story').style.display = 'block'; 
+    document.getElementById('services').style.display = 'none'; 
+    document.getElementById('products').style.display = 'none'; 
+    document.getElementById('membership').style.display = 'none'; 
+    document.getElementById('booking').style.display = 'none'; 
+    document.getElementById('dashboard').style.display = 'none'; 
+    document.getElementById('payment').style.display = 'none'; 
+    document.querySelector('.barbers-section').style.display = 'none'; 
+    document.getElementById('story').scrollIntoView({ behavior: 'smooth' }); 
+  }
+  function scrollToSection(id) { showHome(); document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
+  
+  document.getElementById('showLoginBtn').onclick = () => showAuthModal('login');
+  document.getElementById('showSignupBtn').onclick = () => showAuthModal('signup');
+  document.getElementById('closeAuthModal').onclick = () => document.getElementById('authModal').style.display = 'none';
+  document.getElementById('authSubmitBtn').onclick = handleAuth;
+  document.getElementById('googleAuthBtn').onclick = googleSignIn;
+  document.getElementById('authSwitch').onclick = () => showAuthModal(window.currentAuthMode === 'login' ? 'signup' : 'login');
+  document.getElementById('logoutBtnDropdown').onclick = logout;
+  document.getElementById('promptLoginBtn').onclick = () => showAuthModal('login');
+  document.getElementById('cartBtn').onclick = () => document.getElementById('cartModal').style.display = 'block';
+  document.getElementById('closeCart').onclick = () => document.getElementById('cartModal').style.display = 'none';
+  document.getElementById('checkoutBtn').onclick = () => { 
+    document.getElementById('cartModal').style.display = 'none'; 
+    const hasServices = cart.some(item => item.type === 'service');
+    const hasProducts = cart.some(item => item.type === 'product');
+    if (hasServices) {
+      scrollToSection('booking');
+    } else if (hasProducts) {
+      openProductOrderForm();
+    } else {
+      showNotif('Your cart is empty', true);
+    }
+  };
+  document.getElementById('forgotPasswordLink').onclick = () => { document.getElementById('authModal').style.display = 'none'; document.getElementById('resetModal').style.display = 'flex'; };
+  document.getElementById('closeResetModal').onclick = () => document.getElementById('resetModal').style.display = 'none';
+  document.getElementById('sendResetBtn').onclick = () => sendPasswordReset(document.getElementById('resetEmail').value);
+  document.getElementById('resetPasswordBtn').onclick = () => document.getElementById('resetModal').style.display = 'flex';
+  document.getElementById('changeEmailBtn').onclick = () => document.getElementById('changeEmailModal').style.display = 'flex';
+  document.getElementById('closeChangeEmailModal').onclick = () => document.getElementById('changeEmailModal').style.display = 'none';
+  document.getElementById('confirmChangeEmailBtn').onclick = () => changeEmail(document.getElementById('newEmail').value, document.getElementById('currentPasswordForEmail').value);
+  document.getElementById('accountSettingsBtn').onclick = () => scrollToSection('dashboard');
+  document.getElementById('profileTrigger')?.addEventListener('click', () => { const d = document.getElementById('dropdownContent'); d.style.display = d.style.display === 'block' ? 'none' : 'block'; });
+  document.addEventListener('click', (e) => { if (!e.target.closest('.profile-dropdown')) document.getElementById('dropdownContent').style.display = 'none'; });
+  document.getElementById('refreshAdminData')?.addEventListener('click', loadAdminPanel);
+  document.getElementById('exportBookingsBtn')?.addEventListener('click', async () => { const bookings = await fetchBookings(); let csv = 'Name,Email,Service,Barber,Date,Time,Amount,POP\n'; bookings.forEach(b => { csv += `${b.fullName},${b.email},${b.service},${b.barber},${b.date},${b.timeSlot},${b.totalAmount},${b.popStatus || 'Pending'}\n`; }); const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'madiba_bookings.csv'; a.click(); URL.revokeObjectURL(blob); });
+  document.getElementById('closeAdmin').onclick = () => { document.getElementById('adminDashboard').style.display = 'none'; isAdminLogged = false; };
+  document.getElementById('closePaymentModal').onclick = () => document.getElementById('paymentModal').style.display = 'none';
+  
+  renderServices(); renderBarbers(); renderProducts(); renderMemberships(); updateCartUI(); updateServiceDropdownFromCart();
+  document.getElementById('serviceSelect').innerHTML = services.map(s => `<option value="${s.name}">${s.name} — R${s.price}</option>`).join('');
+  
+  try { 
+    if(firebase.apps.length === 0) firebase.initializeApp(firebaseConfig); 
+    db = firebase.firestore(); 
+    auth = firebase.auth(); 
+    updateStats(); 
+    createAdminUser(); 
+    loadBarberAvailability();
+    auth.onAuthStateChanged(user => { currentUser = user; updateUIForUser(user); }); 
+  } catch(e){ console.warn(e); showNotif('Firebase error', true); }
+</script>
+</body>
+</html>
