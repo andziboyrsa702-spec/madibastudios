@@ -168,7 +168,8 @@
     
     .payment-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); z-index: 5000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(12px); }
     .payment-card { background: #0A0A0A; border-radius: 36px; padding: 35px; width: 520px; max-width: 90%; border: 1px solid rgba(198,142,60,0.4); }
-    .pop-upload { border: 2px dashed #444; padding: 18px; text-align: center; border-radius: 20px; margin: 18px 0; cursor: pointer; }
+    .pop-upload { border: 2px dashed #444; padding: 18px; text-align: center; border-radius: 20px; margin: 18px 0; cursor: pointer; transition: all 0.2s; }
+    .pop-upload:hover { border-color: var(--brown-primary); background: rgba(198,142,60,0.1); }
     .notification { position: fixed; bottom: 20px; right: 20px; background: #1A1A1A; border-left: 4px solid var(--brown-primary); padding: 12px 22px; border-radius: 20px; z-index: 2000; animation: fadeInUp 0.3s ease; font-size: 0.85rem; }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .badge { background: #1A1A1A; padding: 4px 10px; border-radius: 100px; font-size: 0.7rem; }
@@ -194,7 +195,6 @@
     #about, #story { display: none; }
     .barbers-section { padding: 80px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
     
-    /* PROFILE SETUP STYLES */
     .profile-setup-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); z-index: 4500; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(12px); }
     .profile-setup-card { background: #0A0A0A; border-radius: 40px; padding: 40px; width: 520px; max-width: 90%; border: 1px solid rgba(198,142,60,0.4); }
     .profile-setup-card h2 { margin-bottom: 28px; text-align: center; font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--brown-primary); }
@@ -203,15 +203,21 @@
     .skip-profile-link span { color: var(--brown-primary); text-decoration: underline; }
     .slot-locked-indicator { color: #f59e0b; font-size: 0.75rem; margin-left: 8px; }
     
-    /* Admin name setup modal */
     .admin-name-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); z-index: 4600; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(12px); }
     .admin-name-card { background: #0A0A0A; border-radius: 40px; padding: 40px; width: 480px; max-width: 90%; border: 1px solid rgba(198,142,60,0.4); }
     .admin-name-card h2 { margin-bottom: 28px; text-align: center; font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--brown-primary); }
     .admin-info-display { background: #111; padding: 15px; border-radius: 20px; margin-top: 20px; font-size: 0.85rem; color: #aaa; }
     
-    /* Full screen image viewer */
     .fullscreen-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(8px); }
     .fullscreen-img { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 8px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+    
+    .online-payments-text {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--brown-primary);
+      letter-spacing: 0.5px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -249,7 +255,6 @@
   </div>
 </nav>
 
-<!-- Admin Name Setup Modal -->
 <div id="adminNameModal" class="admin-name-modal" style="display: none;">
   <div class="admin-name-card">
     <h2><i class="fas fa-user-shield"></i> Admin Profile</h2>
@@ -261,7 +266,6 @@
   </div>
 </div>
 
-<!-- Profile Setup Modal -->
 <div id="profileSetupModal" class="profile-setup-modal" style="display: none;">
   <div class="profile-setup-card">
     <h2><i class="fas fa-user-circle"></i> Complete Your Profile</h2>
@@ -280,7 +284,6 @@
   </div>
 </div>
 
-<!-- AI Chatbot -->
 <div class="ai-chatbot">
   <div class="chat-toggle" id="chatToggle"><i class="fas fa-robot"></i></div>
   <div class="chat-window" id="chatWindow">
@@ -290,7 +293,6 @@
   </div>
 </div>
 
-<!-- Auth Modal -->
 <div id="authModal" class="auth-modal" style="display: none;">
   <div class="auth-card">
     <div style="display: flex; justify-content: flex-end;"><button id="closeAuthModal" style="background: none; border: none; color: white; font-size: 26px; cursor: pointer;">&times;</button></div>
@@ -305,7 +307,6 @@
   </div>
 </div>
 
-<!-- Password Reset Modal -->
 <div id="resetModal" class="auth-modal" style="display: none;">
   <div class="auth-card">
     <div style="display: flex; justify-content: flex-end;"><button id="closeResetModal" style="background: none; border: none; color: white; font-size: 26px; cursor: pointer;">&times;</button></div>
@@ -317,7 +318,6 @@
   </div>
 </div>
 
-<!-- Change Email Modal -->
 <div id="changeEmailModal" class="auth-modal" style="display: none;">
   <div class="auth-card">
     <div style="display: flex; justify-content: flex-end;"><button id="closeChangeEmailModal" style="background: none; border: none; color: white; font-size: 26px; cursor: pointer;">&times;</button></div>
@@ -329,19 +329,30 @@
   </div>
 </div>
 
-<!-- Payment Modal -->
+<!-- Payment Modal with Payment Method Dropdown -->
 <div id="paymentModal" class="payment-modal" style="display: none;">
   <div class="payment-card">
     <div style="display: flex; justify-content: flex-end;"><button id="closePaymentModal" style="background: none; border: none; color: white; font-size: 26px; cursor: pointer;">&times;</button></div>
     <h2 id="paymentModalTitle">Complete Payment</h2>
     <p id="paymentModalText"><strong>Bank:</strong> Capitec<br><strong>Account:</strong> Capitec Business Account<br><strong>Number:</strong> 1054593817<br><strong>Branch:</strong> 450105<br><strong>Reference:</strong> Your Email</p>
-    <div class="pop-upload" id="popUploadArea"><i class="fas fa-cloud-upload-alt"></i><p>Click to upload Proof of Payment (POP)</p><input type="file" id="popFile" accept="image/*,.pdf" style="display: none;"></div>
+    
+    <!-- PAYMENT METHOD DROPDOWN -->
+    <div class="form-group" style="margin: 15px 0;">
+      <label><i class="fas fa-credit-card"></i> Payment Method</label>
+      <select id="paymentMethodSelect" style="width:100%; padding: 12px 18px; border-radius: 100px; border: 1px solid #2A2A2A; background: #111; color: white;">
+        <option value="Cash">💵 Cash</option>
+        <option value="Card Machine">💳 In-person Card Machine</option>
+        <option value="PAYSHAP">📱 PAYSHAP to 0789932196</option>
+        <option value="EFT">🏦 EFT (Bank Transfer)</option>
+      </select>
+    </div>
+    
+    <div id="popUploadSection" class="pop-upload"><i class="fas fa-cloud-upload-alt"></i><p>Click to upload Proof of Payment (POP)</p><input type="file" id="popFile" accept="image/*,application/pdf" style="display: none;"></div>
     <div id="popStatus" style="color: #10b981; margin: 10px 0;"></div>
     <button id="submitPaymentBtn" class="btn-download" style="width:100%;"><i class="fas fa-check-circle"></i> Submit & Complete</button>
   </div>
 </div>
 
-<!-- Product Order Form Modal -->
 <div id="productOrderModal" class="payment-modal" style="display: none;">
   <div class="payment-card">
     <div style="display: flex; justify-content: flex-end;"><button id="closeProductOrderModal" style="background: none; border: none; color: white; font-size: 26px; cursor: pointer;">&times;</button></div>
@@ -483,7 +494,6 @@
   <section id="payment"><div class="container"><h2 class="section-title">Secure Payment</h2><div class="payment-info-card" style="background:#0B0B0B; border-radius:32px; padding:30px;"><p><strong><i class="fas fa-university"></i> EFT Details:</strong></p><p>Capitec|Madiba Studios | 1054593817 | 450105<br>Reference: Your Email</p></div></div></section>
 </main>
 
-<!-- COMPLETE ADMIN DASHBOARD -->
 <div id="adminDashboard" class="admin-only">
   <div class="admin-panel">
     <button id="closeAdmin" class="close-admin">&times;</button>
@@ -512,7 +522,7 @@
     <div class="bookings-table">
       <table>
         <thead>
-          <tr><th>Client</th><th>Service</th><th>Barber</th><th>Date</th><th>Time</th><th>Amount</th><th>POP Status</th><th>Action</th></tr>
+          <tr><th>Client</th><th>Service</th><th>Barber</th><th>Date</th><th>Time</th><th>Amount</th><th>Payment Method</th><th>POP Status</th><th>Action</th></tr>
         </thead>
         <tbody id="adminBookingsList"></tbody>
       </table>
@@ -522,7 +532,7 @@
     <div class="bookings-table">
       <table>
         <thead>
-          <tr><th>Customer</th><th>Email</th><th>Items</th><th>Total</th><th>POP Status</th><th>Date</th></tr>
+          <tr><th>Customer</th><th>Email</th><th>Items</th><th>Total</th><th>Payment Method</th><th>POP Status</th><th>Date</th></tr>
         </thead>
         <tbody id="adminOrdersList"></tbody>
       </table>
@@ -556,6 +566,7 @@
   </div>
   <div class="footer-copyright">© 2026 MADIBA STUDIOS — CAPE TOWN</div>
   <div class="footer-credit">designed by drixellabs</div>
+  <div class="online-payments-text">🔜 online payments coming soon</div>
 </footer>
 
 <script>
@@ -568,7 +579,6 @@
     appId: "1:329185060386:web:d8fa64c95c9c312edd4c7b"
   };
   
-  // ========== FIXED EMAIL CONFIGURATION ==========
   const BOOKING_EMAIL_CONFIG = {
     serviceId: "service_f50ublr",
     confirmationTemplateId: "template_5lmzu2j",
@@ -635,7 +645,7 @@
     {name:"High Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/WhatsApp%20Image%202026-04-16%20at%2020.32.45.jpeg", description:"A sharp, high fade with a distinct separation between the top and sides."},
     {name:"Low Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/WhatsApp%20Image%202026-04-16%20at%2020.32.46.jpeg", description:"A sharp, high fade with a distinct separation between the top and sides."},
     {name:"Trim Alone", price:40, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0045.jpg?updatedAt=1775929387294", description:"A simple, light trim to keep the shape neat without changing length drastically."},
-    {name:"Bald (Chiskop) & Beard trim", price:60, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0041.jpg", description:"Completely shaved head, a bold, low-maintenance look."},
+    {name:"Bald (Chiskop) & Beard trim", price:60, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0045.jpg?updatedAt=1775929387294", description:"Completely shaved head, a bold, low-maintenance look."},
     {name:"Chiskop alone", price:40, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0046.jpg?updatedAt=1775929387388", description:"Completely shaved head, a bold, low-maintenance look."},
     {name:"Brush Cut & Trim", price:60, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0045.jpg?updatedAt=1775929387294", description:"Completely shaved head, a bold, low-maintenance look."},
   ];
@@ -654,7 +664,6 @@
   let cart = [];
   const timeSlots = Array.from({length: 11}, (_,i) => `${(i+8).toString().padStart(2,'0')}:00`);
   
-  // ========== ADMIN NAME MANAGEMENT ==========
   async function loadAdminSettings() {
     if (!db) return;
     try {
@@ -721,7 +730,6 @@
     modal.style.display = 'flex';
   }
   
-  // ========== TEMPORARY SLOT LOCKING FUNCTIONS ==========
   function lockSlot(date, barber, timeSlot) {
     if (!currentUser) return false;
     const key = `${date}_${barber}_${timeSlot}`;
@@ -782,7 +790,6 @@
     }
   }
   
-  // ========== PROFILE MANAGEMENT FUNCTIONS ==========
   async function saveUserProfile(profileData) {
     if (!currentUser || !db) return;
     try {
@@ -997,7 +1004,6 @@
     setTimeout(()=>d.remove(),3000); 
   }
   
-  // ========== FULLSCREEN IMAGE VIEWER ==========
   window.showFullscreenImage = (imgSrc) => {
     const overlay = document.createElement('div');
     overlay.className = 'fullscreen-overlay';
@@ -1009,7 +1015,6 @@
     document.body.appendChild(overlay);
   };
   
-  // ========== POP DOWNLOAD FOR ADMIN ==========
   let uploadedPOPs = {};
   
   window.downloadPOP = (popDataUrl, fileName) => {
@@ -1030,7 +1035,79 @@
     }
   };
   
-  // ========== EMAILJS CONFIG ==========
+  // POP UPLOAD FIX - Direct event binding
+  function initPopUpload() {
+    const popUploadDiv = document.getElementById('popUploadSection');
+    const popFileInput = document.getElementById('popFile');
+    
+    if (popUploadDiv && popFileInput) {
+      // Remove existing click listeners by cloning and replacing
+      const newPopUploadDiv = popUploadDiv.cloneNode(true);
+      popUploadDiv.parentNode.replaceChild(newPopUploadDiv, popUploadDiv);
+      
+      const newPopFileInput = document.getElementById('popFile');
+      const finalPopDiv = document.getElementById('popUploadSection');
+      
+      if (finalPopDiv) {
+        finalPopDiv.style.cursor = 'pointer';
+        finalPopDiv.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const fileInput = document.getElementById('popFile');
+          if (fileInput) {
+            fileInput.click();
+          }
+        });
+      }
+      
+      if (newPopFileInput) {
+        newPopFileInput.addEventListener('change', function(e) {
+          if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              const popId = Date.now().toString();
+              uploadedPOPs[popId] = { name: file.name, data: event.target.result, type: file.type };
+              const popStatusDiv = document.getElementById('popStatus');
+              if (popStatusDiv) {
+                popStatusDiv.innerHTML = `✅ Uploaded: ${file.name}`;
+              }
+              window.currentPOPId = popId;
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+    }
+  }
+  
+  // Payment method conditional logic
+  function setupPaymentMethodListener() {
+    const paymentMethodSelect = document.getElementById('paymentMethodSelect');
+    const popUploadSection = document.getElementById('popUploadSection');
+    
+    if (paymentMethodSelect && popUploadSection) {
+      paymentMethodSelect.addEventListener('change', function() {
+        const selectedMethod = this.value;
+        if (selectedMethod === 'Cash' || selectedMethod === 'Card Machine' || selectedMethod === 'PAYSHAP') {
+          popUploadSection.style.display = 'none';
+          document.getElementById('popStatus').innerHTML = '';
+        } else {
+          popUploadSection.style.display = 'block';
+          setTimeout(initPopUpload, 50);
+        }
+      });
+      
+      const initialMethod = paymentMethodSelect.value;
+      if (initialMethod === 'Cash' || initialMethod === 'Card Machine' || initialMethod === 'PAYSHAP') {
+        popUploadSection.style.display = 'none';
+      } else {
+        popUploadSection.style.display = 'block';
+        setTimeout(initPopUpload, 100);
+      }
+    }
+  }
+  
   const EMAILJS = {
     CUTS: {
       PUBLIC_KEY: "IDqXwetwSYFXwqxQA",
@@ -1211,6 +1288,8 @@
     document.getElementById('paymentModalTitle').innerText = 'Complete Product Order Payment';
     document.getElementById('paymentModalText').innerHTML = '<strong>Bank:</strong> Capitec<br><strong>Account:</strong> Capitec Busiess Account<br><strong>Number:</strong> 1054593817<br><strong>Branch:</strong> 450105<br><strong>Reference:</strong> Your Email';
     document.getElementById('paymentModal').style.display = 'flex';
+    setupPaymentMethodListener();
+    initPopUpload();
   });
   
   document.getElementById('closeProductOrderModal')?.addEventListener('click', () => {
@@ -1275,40 +1354,31 @@
     document.getElementById('paymentModalTitle').innerText = 'Complete Booking Payment';
     document.getElementById('paymentModalText').innerHTML = '<strong>Bank:</strong> Capitec<br><strong>Account:</strong> Capitec Business Account<br><strong>Number:</strong> 62840951234<br><strong>Branch:</strong> 250655<br><strong>Reference:</strong> Your Email';
     document.getElementById('paymentModal').style.display = 'flex';
+    setupPaymentMethodListener();
+    initPopUpload();
     
     updateStats(); 
   });
   
-  document.getElementById('popUploadArea')?.addEventListener('click', () => document.getElementById('popFile').click());
-  document.getElementById('popFile')?.addEventListener('change', (e) => { 
-    if(e.target.files[0]) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const popId = Date.now().toString();
-        uploadedPOPs[popId] = { name: file.name, data: event.target.result, type: file.type };
-        document.getElementById('popStatus').innerHTML = `✅ Uploaded: ${file.name}`;
-        window.currentPOPId = popId;
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-  
-  window.viewPOP = (id, type) => {
-    if (uploadedPOPs[id]) {
-      const link = document.createElement('a');
-      link.href = uploadedPOPs[id].data;
-      link.download = uploadedPOPs[id].name;
-      link.click();
-    } else {
-      showNotif('POP file not found.', true);
-    }
-  };
-  
   document.getElementById('submitPaymentBtn')?.addEventListener('click', async () => {
+    const selectedPaymentMethod = document.getElementById('paymentMethodSelect')?.value || 'Not specified';
+    
+    // For EFT, require POP upload
+    if (selectedPaymentMethod === 'EFT' && !window.currentPOPId) {
+      showNotif('Please upload proof of payment (POP) for EFT payment', true);
+      return;
+    }
+    
     if (pendingBookingData) {
-      const bookingWithPOP = {...pendingBookingData, popStatus: 'Uploaded', popFileId: window.currentPOPId};
-      await db.collection('bookings').add(bookingWithPOP);
+      const bookingData = {
+        ...pendingBookingData, 
+        popStatus: selectedPaymentMethod === 'EFT' ? 'Uploaded' : 'Not Required', 
+        paymentMethod: selectedPaymentMethod
+      };
+      if (window.currentPOPId) {
+        bookingData.popFileId = window.currentPOPId;
+      }
+      await db.collection('bookings').add(bookingData);
       await sendBookingConfirmationToCustomer(pendingBookingData);
       await sendBookingNotificationToOwner(pendingBookingData);
       
@@ -1331,8 +1401,15 @@
       if(currentUser) loadDashboard(currentUser.email);
       pendingBookingData = null;
     } else if (pendingProductData) {
-      const orderWithPOP = {...pendingProductData, popStatus: 'Uploaded', popFileId: window.currentPOPId};
-      await db.collection('productOrders').add(orderWithPOP);
+      const orderData = {
+        ...pendingProductData, 
+        popStatus: selectedPaymentMethod === 'EFT' ? 'Uploaded' : 'Not Required', 
+        paymentMethod: selectedPaymentMethod
+      };
+      if (window.currentPOPId) {
+        orderData.popFileId = window.currentPOPId;
+      }
+      await db.collection('productOrders').add(orderData);
       await sendMerchOrderEmail({
         email: pendingProductData.email,
         customerName: pendingProductData.fullName,
@@ -1377,10 +1454,10 @@
   function getAIResponse(msg) {
     const m = msg.toLowerCase();
     if(m.includes('price') || m.includes('cost')) return "Our haircut prices: Low/Mid/High Bald Fade, Temple/Mid/High Taper Fade, Buzz Cut are R70 each. High Top Fade and Mullet are R80. Mohawk is R140. Trim is R45. Bald is R40. All merch items are R60 each.";
-    if(m.includes('book') || m.includes('appointment')) return "To book: 1) Login, 2) Go to Booking section, 3) Select date on calendar, 4) Choose service & barber, 5) Pick time, 6) Fill details, 7) Pay via EFT, upload POP.";
+    if(m.includes('book') || m.includes('appointment')) return "To book: 1) Login, 2) Go to Booking section, 3) Select date on calendar, 4) Choose service & barber, 5) Pick time, 6) Fill details, 7) Pay via EFT, upload POP. You can also pay with Cash, Card Machine, or PAYSHAP to 0789932196.";
     if(m.includes('barber')) return "Our barbers: Motheo Mbulawa (founder), Sanele Mabula, Andile Xaba.";
     if(m.includes('product') || m.includes('merch')) return "Add products to cart, checkout, fill delivery details, pay via EFT, upload POP.";
-    if(m.includes('payment') || m.includes('eft')) return "EFT: Capitec, Acc: 1054593817, Branch: 450105. Reference: Your email. After payment, upload POP.";
+    if(m.includes('payment') || m.includes('eft')) return "EFT: Capitec, Acc: 1054593817, Branch: 450105. Reference: Your email. Also available: Cash, Card Machine, PAYSHAP to 0789932196. Online payments coming soon!";
     if(m.includes('membership')) return "Tiers: Silver (0-2 bookings), Gold (3-5 bookings), Platinum (10+ bookings).";
     return "I can help with bookings, prices, barbers, products, payments, membership. What do you need?";
   }
@@ -1470,9 +1547,9 @@
     if(revenueChart) revenueChart.destroy();
     revenueChart = new Chart(document.getElementById('revenueChart'), { type: 'line', data: { labels: bookings.map((_,i)=>i+1), datasets: [{ label: 'Revenue', data: revenueData, borderColor: '#C68E3C', fill: false }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: 'white' } } } } });
     
-    document.getElementById('adminBookingsList').innerHTML = bookings.map(b => `<tr><td style="padding:12px;">${b.fullName}</td><td style="padding:12px;">${b.service}</td><td style="padding:12px;">${b.barber}</td><td style="padding:12px;">${b.date}</td><td style="padding:12px;">${b.timeSlot}</td><td style="padding:12px;">R${b.totalAmount||0}</td><td style="padding:12px;"><span class="pop-badge ${b.popStatus === 'Uploaded' ? 'pop-uploaded' : 'pop-pending'}" onclick="viewPOPForAdmin('${b.popFileId || b.id}', '${b.id}')">${b.popStatus || 'Pending'} ${b.popStatus === 'Uploaded' ? '📥 Download' : ''}</span></td><td style="padding:12px;"><button onclick="cancelBooking('${b.id}')" class="btn-danger">Cancel</button></td>`).join('') || '<tr><td colspan="8">No bookings</td>';
+    document.getElementById('adminBookingsList').innerHTML = bookings.map(b => `<tr><td style="padding:12px;">${b.fullName}</td><td style="padding:12px;">${b.service}</td><td style="padding:12px;">${b.barber}</td><td style="padding:12px;">${b.date}</td><td style="padding:12px;">${b.timeSlot}</td><td style="padding:12px;">R${b.totalAmount||0}</td><td style="padding:12px;">${b.paymentMethod || 'Not specified'}</td><td style="padding:12px;"><span class="pop-badge ${b.popStatus === 'Uploaded' ? 'pop-uploaded' : 'pop-pending'}" onclick="viewPOPForAdmin('${b.popFileId || b.id}', '${b.id}')">${b.popStatus || 'Pending'} ${b.popStatus === 'Uploaded' ? '📥 Download' : ''}</span></td><td style="padding:12px;"><button onclick="cancelBooking('${b.id}')" class="btn-danger">Cancel</button></td>`).join('') || '<tr><td colspan="9">No bookings</td>';
     
-    document.getElementById('adminOrdersList').innerHTML = orders.map(o => `<tr><td style="padding:12px;">${o.fullName}</td><td style="padding:12px;">${o.email}</td><td style="padding:12px;">${o.items.map(i=>i.name).join(', ')}</td><td style="padding:12px;">R${o.totalAmount}</td><td style="padding:12px;"><span class="pop-badge ${o.popStatus === 'Uploaded' ? 'pop-uploaded' : 'pop-pending'}" onclick="viewPOPForAdmin('${o.popFileId || o.id}', '${o.id}')">${o.popStatus || 'Pending'} ${o.popStatus === 'Uploaded' ? '📥 Download' : ''}</span></td><td style="padding:12px;">${new Date(o.createdAt).toLocaleDateString()}</td>`).join('') || '<tr><td colspan="6">No orders</td>';
+    document.getElementById('adminOrdersList').innerHTML = orders.map(o => `<tr><td style="padding:12px;">${o.fullName}</td><td style="padding:12px;">${o.email}</td><td style="padding:12px;">${o.items.map(i=>i.name).join(', ')}</td><td style="padding:12px;">R${o.totalAmount}</td><td style="padding:12px;">${o.paymentMethod || 'Not specified'}</td><td style="padding:12px;"><span class="pop-badge ${o.popStatus === 'Uploaded' ? 'pop-uploaded' : 'pop-pending'}" onclick="viewPOPForAdmin('${o.popFileId || o.id}', '${o.id}')">${o.popStatus || 'Pending'} ${o.popStatus === 'Uploaded' ? '📥 Download' : ''}</span></td><td style="padding:12px;">${new Date(o.createdAt).toLocaleDateString()}</td>`).join('') || '<tr><td colspan="7">No orders</td>';
     
     document.getElementById('adminUsersList').innerHTML = users.map(u => `<tr><td style="padding:12px;">${u.fullName}</td><td style="padding:12px;">${u.email}</td><td style="padding:12px;">${u.membership || 'Silver'}</td><td style="padding:12px;">${u.totalBookings || 0}</td><td style="padding:12px;">${u.residence || u.campus || '-'}</td><td style="padding:12px;">${u.roomNumber || '-'}</td>`).join('') || '<tr><td colspan="6">No users</td>';
     renderAdminBarbers();
@@ -1602,7 +1679,7 @@
     if(!userDoc.exists) return;
     const data = userDoc.data();
     const bookingsSnap = await db.collection('bookings').where('email','==',email).get();
-    let history = bookingsSnap.docs.map(d=>`<div class="booking-history-item"><i class="fas fa-cut"></i> ${d.data().service} | ${d.data().date} ${d.data().timeSlot} | R${d.data().totalAmount||0} | POP: ${d.data().popStatus || 'Pending'}</div>`).join('');
+    let history = bookingsSnap.docs.map(d=>`<div class="booking-history-item"><i class="fas fa-cut"></i> ${d.data().service} | ${d.data().date} ${d.data().timeSlot} | R${d.data().totalAmount||0} | Payment: ${d.data().paymentMethod || 'N/A'} | POP: ${d.data().popStatus || 'Pending'}</div>`).join('');
     document.getElementById('clientDashboard').innerHTML = `<div><h3><i class="fas fa-user-circle"></i> ${data.fullName}</h3><span class="badge"><i class="fas fa-star"></i> ${data.membership} Member</span><p><i class="fas fa-building"></i> ${data.residence || data.campus || 'Set residence'} | <i class="fas fa-door-open"></i> Room ${data.roomNumber || 'N/A'}</p><h4>Booking History</h4>${history || '<p>No bookings yet</p>'}</div>`;
   }
   
@@ -1658,7 +1735,6 @@
     document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); 
   }
   
-  // Profile Setup Modal Handlers
   document.getElementById('saveProfileBtn')?.addEventListener('click', async () => {
     const fullName = document.getElementById('profileFullName').value;
     const residence = document.getElementById('profileResidence').value;
@@ -1713,7 +1789,6 @@
     }
   });
   
-  // Admin Name Modal Handlers
   document.getElementById('saveAdminNameBtn')?.addEventListener('click', async () => {
     const name = document.getElementById('adminDisplayName').value.trim();
     if (!name) {
@@ -1734,7 +1809,6 @@
     showAdminNameModal();
   });
   
-  // Initialize everything
   document.getElementById('showLoginBtn').onclick = () => showAuthModal('login');
   document.getElementById('showSignupBtn').onclick = () => showAuthModal('signup');
   document.getElementById('closeAuthModal').onclick = () => document.getElementById('authModal').style.display = 'none';
@@ -1783,9 +1857,9 @@
   });
   document.getElementById('exportBookingsBtn')?.addEventListener('click', async () => { 
     const bookings = await fetchBookings(); 
-    let csv = 'Name,Email,Service,Barber,Date,Time,Amount,POP\n'; 
+    let csv = 'Name,Email,Service,Barber,Date,Time,Amount,Payment Method,POP\n'; 
     bookings.forEach(b => { 
-      csv += `${b.fullName},${b.email},${b.service},${b.barber},${b.date},${b.timeSlot},${b.totalAmount},${b.popStatus || 'Pending'}\n`; 
+      csv += `${b.fullName},${b.email},${b.service},${b.barber},${b.date},${b.timeSlot},${b.totalAmount},${b.paymentMethod || 'Not specified'},${b.popStatus || 'Pending'}\n`; 
     }); 
     const blob = new Blob([csv], { type: 'text/csv' }); 
     const a = document.createElement('a'); 
