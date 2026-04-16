@@ -60,8 +60,8 @@
     .services-grid, .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px; }
     .service-card, .product-card { background: #0B0B0B; border-radius: 28px; overflow: hidden; transition: all 0.3s; border: 1px solid rgba(198,142,60,0.2); cursor: pointer; }
     .service-card:hover, .product-card:hover { transform: translateY(-5px); border-color: var(--brown-primary); }
-    .service-img { width: 100%; height: 220px; object-fit: cover; }
-    .product-img { width: 100%; height: 190px; object-fit: cover; }
+    .service-img { width: 100%; height: 220px; object-fit: cover; cursor: pointer; }
+    .product-img { width: 100%; height: 190px; object-fit: cover; cursor: pointer; }
     .service-info, .product-info { padding: 22px; }
     .price { font-weight: 700; font-size: 1.8rem; color: var(--brown-primary); margin: 10px 0; font-family: 'Playfair Display', serif; }
     .service-description { color: #aaa; font-size: 0.85rem; line-height: 1.6; margin-top: 8px; }
@@ -71,7 +71,7 @@
     @media (max-width: 600px) { .barbers-grid { grid-template-columns: 1fr; } }
     .barber-card { background: #0B0B0B; border-radius: 28px; padding: 25px; text-align: center; border: 1px solid rgba(198,142,60,0.2); transition: all 0.3s; }
     .barber-card:hover { transform: translateY(-5px); border-color: var(--brown-primary); }
-    .barber-img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px; border: 3px solid var(--brown-primary); }
+    .barber-img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px; border: 3px solid var(--brown-primary); cursor: pointer; }
     .barber-name { font-size: 1.3rem; font-weight: 600; margin: 10px 0; font-family: 'Playfair Display', serif; }
     .barber-status { display: inline-block; padding: 4px 12px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; margin-top: 8px; }
     .status-available { background: #10b981; color: white; }
@@ -208,6 +208,10 @@
     .admin-name-card { background: #0A0A0A; border-radius: 40px; padding: 40px; width: 480px; max-width: 90%; border: 1px solid rgba(198,142,60,0.4); }
     .admin-name-card h2 { margin-bottom: 28px; text-align: center; font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--brown-primary); }
     .admin-info-display { background: #111; padding: 15px; border-radius: 20px; margin-top: 20px; font-size: 0.85rem; color: #aaa; }
+    
+    /* Full screen image viewer */
+    .fullscreen-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(8px); }
+    .fullscreen-img { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 8px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
   </style>
 </head>
 <body>
@@ -619,18 +623,21 @@
   }
   
   const services = [
-    {name:"Low Bald Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0048.jpg", description:"This cut starts with a very short, shaved fade near the ears and gradually blends up. It's clean, subtle, and low-maintenance."},
-    {name:"Mid Bald Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0041.jpg", description:"A balanced fade that starts halfway up the sides, giving a middle ground between subtle and bold."},
-    {name:"High Bald Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0040.jpg", description:"The fade begins very high on the sides, giving a sharp contrast between the shaved sides and the fuller top."},
-    {name:"High Top Fade", price:80, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0043.jpg", description:"The sides are faded low, but the top is kept long and shaped upward, creating a dramatic, square silhouette."},
-    {name:"Mullet", price:80, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0042.jpg", description:"Short at the front and sides, but long in the back; it's a retro style making a comeback."},
-    {name:"Mohawk", price:80, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0049.jpg", description:"The sides are shaved, leaving a strip of longer hair down the middle, often spiked or styled."},
-    {name:"Buzz Cut", price:140, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0047.jpg", description:"A super short, uniform cut all over; it's simple, classic, and easy to maintain."},
-    {name:"Temple Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0045.jpg", description:"The hair at the temples is tapered gradually, giving a subtle, neat finish."},
-    {name:"Mid Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0046.jpg", description:"A gradual fade starting at mid-level, blending smoothly into the top."},
-    {name:"High Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0050.jpg", description:"A sharp, high fade with a distinct separation between the top and sides."},
-    {name:"Trim Alone", price:45, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0047.jpg", description:"A simple, light trim to keep the shape neat without changing length drastically."},
-    {name:"Bald (Chiskop)", price:40, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0041.jpg", description:"Completely shaved head, a bold, low-maintenance look."}
+    {name:"Low Bald Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/WhatsApp%20Image%202026-04-16%20at%2020.32.46%20(1).jpeg", description:"This cut starts with a very short, shaved fade near the ears and gradually blends up. It's clean, subtle, and low-maintenance."},
+    {name:"Mid Bald Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0042.jpg?updatedAt=1775929387419", description:"A balanced fade that starts halfway up the sides, giving a middle ground between subtle and bold."},
+    {name:"High Bald Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0043.jpg?updatedAt=1775929387792", description:"The fade begins very high on the sides, giving a sharp contrast between the shaved sides and the fuller top."},
+    {name:"High Top Fade", price:60, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0047.jpg?updatedAt=1775929386458", description:"The sides are faded low, but the top is kept long and shaped upward, creating a dramatic, square silhouette."},
+    {name:"Mullet", price:80, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0048.jpg?updatedAt=1775929388278", description:"Short at the front and sides, but long in the back; it's a retro style making a comeback."},
+    {name:"Mohawk", price:80, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0049.jpg?updatedAt=1775929387808", description:"The sides are shaved, leaving a strip of longer hair down the middle, often spiked or styled."},
+    {name:"Buzz Cut", price:140, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0050.jpg?updatedAt=1775929387640", description:"A super short, uniform cut all over; it's simple, classic, and easy to maintain."},
+    {name:"Temple Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0044.jpg?updatedAt=1775929388021", description:"The hair at the temples is tapered gradually, giving a subtle, neat finish."},
+    {name:"Mid Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0040.jpg?updatedAt=1775929387889", description:"A gradual fade starting at mid-level, blending smoothly into the top."},
+    {name:"High Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/WhatsApp%20Image%202026-04-16%20at%2020.32.45.jpeg", description:"A sharp, high fade with a distinct separation between the top and sides."},
+    {name:"Low Taper Fade", price:70, img:"https://ik.imagekit.io/cxzgj4jeg/WhatsApp%20Image%202026-04-16%20at%2020.32.46.jpeg", description:"A sharp, high fade with a distinct separation between the top and sides."},
+    {name:"Trim Alone", price:40, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0045.jpg?updatedAt=1775929387294", description:"A simple, light trim to keep the shape neat without changing length drastically."},
+    {name:"Bald (Chiskop) & Beard trim", price:60, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0041.jpg", description:"Completely shaved head, a bold, low-maintenance look."},
+    {name:"Chiskop alone", price:40, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0046.jpg?updatedAt=1775929387388", description:"Completely shaved head, a bold, low-maintenance look."},
+    {name:"Brush Cut & Trim", price:60, img:"https://ik.imagekit.io/cxzgj4jeg/IMG-20260409-WA0045.jpg?updatedAt=1775929387294", description:"Completely shaved head, a bold, low-maintenance look."},
   ];
   
   const products = [
@@ -830,13 +837,13 @@
   
   function renderServices() {
     const container = document.getElementById("servicesList");
-    container.innerHTML = services.map(s => `<div class="service-card" onclick="selectServiceForBooking('${s.name}', ${s.price})"><img class="service-img" src="${s.img}" onerror="this.src='https://placehold.co/400x220/222/white'"><div class="service-info"><h3>${s.name}</h3><div class="price">R${s.price}</div><p class="service-description">${s.description}</p><button class="btn-outline addToCartBtn" data-name="${s.name}" data-price="${s.price}" data-type="service" onclick="event.stopPropagation()"><i class="fas fa-cart-plus"></i> Add to Cart</button></div></div>`).join('');
+    container.innerHTML = services.map(s => `<div class="service-card" onclick="selectServiceForBooking('${s.name}', ${s.price})"><img class="service-img" src="${s.img}" onerror="this.src='https://placehold.co/400x220/222/white'" onclick="event.stopPropagation(); showFullscreenImage('${s.img}')"><div class="service-info"><h3>${s.name}</h3><div class="price">R${s.price}</div><p class="service-description">${s.description}</p><button class="btn-outline addToCartBtn" data-name="${s.name}" data-price="${s.price}" data-type="service" onclick="event.stopPropagation()"><i class="fas fa-cart-plus"></i> Add to Cart</button></div></div>`).join('');
     document.querySelectorAll('.addToCartBtn').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); addToCart({name: btn.dataset.name, price: parseInt(btn.dataset.price), type: 'service'}); }));
   }
   
   function renderBarbers() {
     const container = document.getElementById("barbersGrid");
-    container.innerHTML = barbers.map(b => `<div class="barber-card"><img class="barber-img" src="${b.img}" onerror="this.src='https://placehold.co/150x150/222/white?text=${b.name.charAt(0)}'"><h3 class="barber-name">${b.name}</h3><span class="barber-status ${b.available ? 'status-available' : 'status-unavailable'}">${b.available ? 'Available' : 'Unavailable'}</span></div>`).join('');
+    container.innerHTML = barbers.map(b => `<div class="barber-card"><img class="barber-img" src="${b.img}" onerror="this.src='https://placehold.co/150x150/222/white?text=${b.name.charAt(0)}'" onclick="showFullscreenImage('${b.img}')"><h3 class="barber-name">${b.name}</h3><span class="barber-status ${b.available ? 'status-available' : 'status-unavailable'}">${b.available ? 'Available' : 'Unavailable'}</span></div>`).join('');
     const select = document.getElementById("barberSelect");
     select.innerHTML = barbers.filter(b => b.available).map(b => `<option value="${b.name}">✂️ ${b.name}</option>`).join('');
     if (select.innerHTML === '') select.innerHTML = '<option disabled>No barbers available</option>';
@@ -860,7 +867,7 @@
   
   function renderProducts() {
     const container = document.getElementById("productList");
-    container.innerHTML = products.map(p => `<div class="product-card"><img class="product-img" src="${p.img}" onerror="this.src='https://placehold.co/300x190/222/white'"><div class="product-info"><h3>${p.name}</h3><div class="price">R${p.price}</div><button class="btn-outline addProductBtn" data-name="${p.name}" data-price="${p.price}" data-type="product"><i class="fas fa-cart-plus"></i> Add to Cart</button></div></div>`).join('');
+    container.innerHTML = products.map(p => `<div class="product-card"><img class="product-img" src="${p.img}" onerror="this.src='https://placehold.co/300x190/222/white'" onclick="showFullscreenImage('${p.img}')"><div class="product-info"><h3>${p.name}</h3><div class="price">R${p.price}</div><button class="btn-outline addProductBtn" data-name="${p.name}" data-price="${p.price}" data-type="product"><i class="fas fa-cart-plus"></i> Add to Cart</button></div></div>`).join('');
     document.querySelectorAll('.addProductBtn').forEach(btn => btn.addEventListener('click', () => addToCart({name: btn.dataset.name, price: parseInt(btn.dataset.price), type: 'product'})));
   }
   
@@ -990,6 +997,39 @@
     setTimeout(()=>d.remove(),3000); 
   }
   
+  // ========== FULLSCREEN IMAGE VIEWER ==========
+  window.showFullscreenImage = (imgSrc) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'fullscreen-overlay';
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    img.className = 'fullscreen-img';
+    overlay.appendChild(img);
+    overlay.onclick = () => overlay.remove();
+    document.body.appendChild(overlay);
+  };
+  
+  // ========== POP DOWNLOAD FOR ADMIN ==========
+  let uploadedPOPs = {};
+  
+  window.downloadPOP = (popDataUrl, fileName) => {
+    const link = document.createElement('a');
+    link.href = popDataUrl;
+    link.download = fileName || 'proof_of_payment.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showNotif('Downloading POP file...');
+  };
+  
+  window.viewPOPForAdmin = (popId, bookingId) => {
+    if (uploadedPOPs[popId] && uploadedPOPs[popId].data) {
+      downloadPOP(uploadedPOPs[popId].data, `POP_${bookingId}_${Date.now()}.png`);
+    } else {
+      showNotif('POP file not found in cache. It may need to be re-uploaded.', true);
+    }
+  };
+  
   // ========== EMAILJS CONFIG ==========
   const EMAILJS = {
     CUTS: {
@@ -1092,7 +1132,7 @@
 
   async function sendBookingNotificationToOwner(bookingDetails) {
     try {
-      setEmailAccount("MERCH"); // Use MERCH config since it shares the same service ID and public key
+      setEmailAccount("MERCH");
       const result = await emailjs.send(
         EMAILJS.MERCH.SERVICE_ID,
         "template_xgy3u38",
@@ -1238,8 +1278,6 @@
     
     updateStats(); 
   });
-  
-  let uploadedPOPs = {};
   
   document.getElementById('popUploadArea')?.addEventListener('click', () => document.getElementById('popFile').click());
   document.getElementById('popFile')?.addEventListener('change', (e) => { 
@@ -1398,7 +1436,6 @@
       isAdminLogged = true;
       await loadAdminSettings();
       
-      // Check if admin name is set
       const snap = await db.collection("settings").doc("adminProfile").get();
       if (!snap.exists || !snap.data().displayName) {
         showAdminNameModal();
@@ -1433,11 +1470,11 @@
     if(revenueChart) revenueChart.destroy();
     revenueChart = new Chart(document.getElementById('revenueChart'), { type: 'line', data: { labels: bookings.map((_,i)=>i+1), datasets: [{ label: 'Revenue', data: revenueData, borderColor: '#C68E3C', fill: false }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: 'white' } } } } });
     
-    document.getElementById('adminBookingsList').innerHTML = bookings.map(b => `<tr><td style="padding:12px;">${b.fullName}</td><td style="padding:12px;">${b.service}</td><td style="padding:12px;">${b.barber}</td><td style="padding:12px;">${b.date}</td><td style="padding:12px;">${b.timeSlot}</td><td style="padding:12px;">R${b.totalAmount||0}</td><td style="padding:12px;"><span class="pop-badge ${b.popStatus === 'Uploaded' ? 'pop-uploaded' : 'pop-pending'}" onclick="viewPOP('${b.popFileId || b.id}', 'booking')">${b.popStatus || 'Pending'}</span></td><td style="padding:12px;"><button onclick="cancelBooking('${b.id}')" class="btn-danger">Cancel</button></td></tr>`).join('') || '<tr><td colspan="8">No bookings</td></tr>';
+    document.getElementById('adminBookingsList').innerHTML = bookings.map(b => `<tr><td style="padding:12px;">${b.fullName}</td><td style="padding:12px;">${b.service}</td><td style="padding:12px;">${b.barber}</td><td style="padding:12px;">${b.date}</td><td style="padding:12px;">${b.timeSlot}</td><td style="padding:12px;">R${b.totalAmount||0}</td><td style="padding:12px;"><span class="pop-badge ${b.popStatus === 'Uploaded' ? 'pop-uploaded' : 'pop-pending'}" onclick="viewPOPForAdmin('${b.popFileId || b.id}', '${b.id}')">${b.popStatus || 'Pending'} ${b.popStatus === 'Uploaded' ? '📥 Download' : ''}</span></td><td style="padding:12px;"><button onclick="cancelBooking('${b.id}')" class="btn-danger">Cancel</button></td>`).join('') || '<tr><td colspan="8">No bookings</td>';
     
-    document.getElementById('adminOrdersList').innerHTML = orders.map(o => `<tr><td style="padding:12px;">${o.fullName}</td><td style="padding:12px;">${o.email}</td><td style="padding:12px;">${o.items.map(i=>i.name).join(', ')}</td><td style="padding:12px;">R${o.totalAmount}</td><td style="padding:12px;"><span class="pop-badge ${o.popStatus === 'Uploaded' ? 'pop-uploaded' : 'pop-pending'}" onclick="viewPOP('${o.popFileId || o.id}', 'order')">${o.popStatus || 'Pending'}</span></td><td style="padding:12px;">${new Date(o.createdAt).toLocaleDateString()}</td></tr>`).join('') || '<tr><td colspan="6">No orders</td></tr>';
+    document.getElementById('adminOrdersList').innerHTML = orders.map(o => `<tr><td style="padding:12px;">${o.fullName}</td><td style="padding:12px;">${o.email}</td><td style="padding:12px;">${o.items.map(i=>i.name).join(', ')}</td><td style="padding:12px;">R${o.totalAmount}</td><td style="padding:12px;"><span class="pop-badge ${o.popStatus === 'Uploaded' ? 'pop-uploaded' : 'pop-pending'}" onclick="viewPOPForAdmin('${o.popFileId || o.id}', '${o.id}')">${o.popStatus || 'Pending'} ${o.popStatus === 'Uploaded' ? '📥 Download' : ''}</span></td><td style="padding:12px;">${new Date(o.createdAt).toLocaleDateString()}</td>`).join('') || '<tr><td colspan="6">No orders</td>';
     
-    document.getElementById('adminUsersList').innerHTML = users.map(u => `<tr><td style="padding:12px;">${u.fullName}</td><td style="padding:12px;">${u.email}</td><td style="padding:12px;">${u.membership || 'Silver'}</td><td style="padding:12px;">${u.totalBookings || 0}</td><td style="padding:12px;">${u.residence || u.campus || '-'}</td><td style="padding:12px;">${u.roomNumber || '-'}</td></tr>`).join('') || '<tr><td colspan="6">No users</td></tr>';
+    document.getElementById('adminUsersList').innerHTML = users.map(u => `<tr><td style="padding:12px;">${u.fullName}</td><td style="padding:12px;">${u.email}</td><td style="padding:12px;">${u.membership || 'Silver'}</td><td style="padding:12px;">${u.totalBookings || 0}</td><td style="padding:12px;">${u.residence || u.campus || '-'}</td><td style="padding:12px;">${u.roomNumber || '-'}</td>`).join('') || '<tr><td colspan="6">No users</td>';
     renderAdminBarbers();
   }
   
