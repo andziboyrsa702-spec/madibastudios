@@ -211,6 +211,22 @@
     .fullscreen-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(8px); }
     .fullscreen-img { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 8px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
     
+    .admin-bookings-wrapper { margin-top: 20px; }
+    .admin-day-group { background: #111; border: 1px solid rgba(198,142,60,0.18); border-radius: 24px; padding: 18px; margin-bottom: 18px; }
+    .admin-day-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .admin-day-heading h4 { font-size: 1.05rem; color: var(--brown-primary); font-family: 'Playfair Display', serif; }
+    .admin-day-count { background: rgba(198,142,60,0.14); color: #f4d39a; padding: 6px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+    .admin-booking-card { background: #0B0B0B; border: 1px solid rgba(198,142,60,0.12); border-radius: 20px; padding: 16px; margin-bottom: 12px; }
+    .admin-booking-card:last-child { margin-bottom: 0; }
+    .admin-booking-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+    .admin-booking-name { font-weight: 700; font-size: 0.98rem; }
+    .admin-booking-time { color: var(--brown-primary); font-weight: 700; }
+    .admin-booking-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px 14px; margin-bottom: 14px; }
+    .admin-booking-item { background: #101010; border-radius: 14px; padding: 10px 12px; }
+    .admin-booking-item span { display: block; font-size: 0.68rem; color: #9a9a9a; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .admin-booking-item strong { font-size: 0.84rem; color: #fff; word-break: break-word; }
+    .admin-booking-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
     .online-payments-text {
       text-align: center;
       font-size: 0.7rem;
@@ -519,14 +535,8 @@
     </div>
     
     <h3><i class="fas fa-calendar-check"></i> Manage Bookings</h3>
-    <div class="bookings-table">
-      <table>
-        <thead>
-          <tr><th>Client</th><th>Service</th><th>Barber</th><th>Date</th><th>Time</th><th>Amount</th><th>Payment Method</th><th>POP Status</th><th>Action</th></tr>
-        </thead>
-        <tbody id="adminBookingsList"></tbody>
-      </table>
-    </div>
+    <p style="color:#aaa; margin: 8px 0 16px;">Appointments are grouped by day and sorted in chronological order. Each booking now includes the client location.</p>
+    <div id="adminBookingsList" class="admin-bookings-wrapper"></div>
     
     <h3 style="margin-top: 35px;"><i class="fas fa-box"></i> Product Orders</h3>
     <div class="bookings-table">
@@ -662,7 +672,7 @@
   ];
   
   let cart = [];
-  const timeSlots = Array.from({length: 11}, (_,i) => `${(i+8).toString().padStart(2,'0')}:00`);
+  const timeSlots = Array.from({length: 13}, (_,i) => `${(i+8).toString().padStart(2,'0')}:00`);
   
   async function loadAdminSettings() {
     if (!db) return;
@@ -1132,9 +1142,54 @@
     }
   }
 
+  function padCalendarNumber(value) {
+    return String(value).padStart(2, '0');
+  }
+
+  function buildGoogleCalendarLink(bookingDetails) {
+    try {
+      const [year, month, day] = String(bookingDetails.date).split('-').map(Number);
+      const [hour, minute] = String(bookingDetails.timeSlot || '08:00').split(':').map(Number);
+
+      if (!year || !month || !day || hour === undefined || minute === undefined) {
+        return '';
+      }
+
+      const start = new Date(year, month - 1, day, hour, minute, 0);
+      const end = new Date(start.getTime() + 60 * 60 * 1000);
+
+      const formatGoogleDate = (dateObj) => {
+        return (
+          dateObj.getFullYear().toString() +
+          padCalendarNumber(dateObj.getMonth() + 1) +
+          padCalendarNumber(dateObj.getDate()) + 'T' +
+          padCalendarNumber(dateObj.getHours()) +
+          padCalendarNumber(dateObj.getMinutes()) +
+          padCalendarNumber(dateObj.getSeconds())
+        );
+      };
+
+      const summary = `Madiba Studios Booking - ${bookingDetails.service}`;
+      const location = `${bookingDetails.location || 'Cape Town'}${bookingDetails.room ? ', Room ' + bookingDetails.room : ''}`;
+      const details = [
+        `Client: ${bookingDetails.fullName || ''}`,
+        `Service: ${bookingDetails.service || ''}`,
+        `Barber: ${bookingDetails.barber || ''}`,
+        `Payment Method: ${bookingDetails.paymentMethod || 'Not specified'}`,
+        'Madiba Studios appointment'
+      ].join(' | ');
+
+      return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(summary)}&dates=${formatGoogleDate(start)}/${formatGoogleDate(end)}&location=${encodeURIComponent(location)}&details=${encodeURIComponent(details)}`;
+    } catch (error) {
+      console.error('Google Calendar link generation failed:', error);
+      return '';
+    }
+  }
+
   async function sendBookingConfirmationToCustomer(bookingDetails) {
     try {
       setEmailAccount("CUTS");
+      const googleCalendarLink = buildGoogleCalendarLink(bookingDetails);
       const result = await emailjs.send(
         EMAILJS.CUTS.SERVICE_ID,
         "template_5lmzu2j",
@@ -1147,7 +1202,8 @@
           time: bookingDetails.timeSlot,
           location: bookingDetails.location,
           room: bookingDetails.room,
-          total: bookingDetails.totalAmount
+          total: bookingDetails.totalAmount,
+          payment_method: bookingDetails.paymentMethod || 'Not specified'
         }
       );
       console.log("✅ CUTS confirmation sent:", result);
@@ -1210,6 +1266,7 @@
   async function sendBookingNotificationToOwner(bookingDetails) {
     try {
       setEmailAccount("MERCH");
+      const googleCalendarLink = buildGoogleCalendarLink(bookingDetails);
       const result = await emailjs.send(
         EMAILJS.MERCH.SERVICE_ID,
         "template_xgy3u38",
@@ -1223,7 +1280,10 @@
           time: bookingDetails.timeSlot,
           location: bookingDetails.location,
           room: bookingDetails.room,
-          total: bookingDetails.totalAmount
+          total: bookingDetails.totalAmount,
+          payment_method: bookingDetails.paymentMethod || 'Not specified',
+          google_calendar_link: googleCalendarLink,
+          google_calendar_url: googleCalendarLink
         }
       );
       console.log("✅ OWNER notification sent:", result);
@@ -1379,8 +1439,8 @@
         bookingData.popFileId = window.currentPOPId;
       }
       await db.collection('bookings').add(bookingData);
-      await sendBookingConfirmationToCustomer(pendingBookingData);
-      await sendBookingNotificationToOwner(pendingBookingData);
+      await sendBookingConfirmationToCustomer(bookingData);
+      await sendBookingNotificationToOwner(bookingData);
       
       if (window.currentLockedSlot) {
         unlockSlot(window.currentLockedSlot.date, window.currentLockedSlot.barber, window.currentLockedSlot.timeSlot);
@@ -1527,9 +1587,85 @@
     } 
   }
   
+  function compareTimeStrings(a = '00:00', b = '00:00') {
+    return a.localeCompare(b, undefined, { numeric: true });
+  }
+  
+  function formatBookingDayLabel(dateString) {
+    if (!dateString) return 'Undated Bookings';
+    const dateObj = new Date(`${dateString}T00:00:00`);
+    if (Number.isNaN(dateObj.getTime())) return dateString;
+    return dateObj.toLocaleDateString('en-CA', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+  
+  function renderGroupedAdminBookings(bookings) {
+    const container = document.getElementById('adminBookingsList');
+    if (!container) return;
+    
+    if (!bookings.length) {
+      container.innerHTML = '<div class="admin-day-group"><div class="admin-day-heading"><h4>No bookings yet</h4></div><p style="color:#aaa;">There are no appointments to display.</p></div>';
+      return;
+    }
+    
+    const sortedBookings = [...bookings].sort((a, b) => {
+      const dateCompare = (a.date || '').localeCompare(b.date || '');
+      if (dateCompare !== 0) return dateCompare;
+      const timeCompare = compareTimeStrings(a.timeSlot || '', b.timeSlot || '');
+      if (timeCompare !== 0) return timeCompare;
+      return (a.fullName || '').localeCompare(b.fullName || '');
+    });
+    
+    const grouped = sortedBookings.reduce((acc, booking) => {
+      const key = booking.date || 'Undated';
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(booking);
+      return acc;
+    }, {});
+    
+    container.innerHTML = Object.entries(grouped).map(([date, dayBookings]) => `
+      <div class="admin-day-group">
+        <div class="admin-day-heading">
+          <h4>${formatBookingDayLabel(date)}</h4>
+          <div class="admin-day-count">${dayBookings.length} appointment${dayBookings.length === 1 ? '' : 's'}</div>
+        </div>
+        ${dayBookings.map(b => `
+          <div class="admin-booking-card">
+            <div class="admin-booking-top">
+              <div class="admin-booking-name">${b.fullName || 'Unnamed client'}</div>
+              <div class="admin-booking-time">${b.timeSlot || 'No time set'}</div>
+            </div>
+            <div class="admin-booking-grid">
+              <div class="admin-booking-item"><span>Service</span><strong>${b.service || '-'}</strong></div>
+              <div class="admin-booking-item"><span>Barber</span><strong>${b.barber || '-'}</strong></div>
+              <div class="admin-booking-item"><span>Amount</span><strong>R${b.totalAmount || 0}</strong></div>
+              <div class="admin-booking-item"><span>Payment Method</span><strong>${b.paymentMethod || 'Not specified'}</strong></div>
+              <div class="admin-booking-item"><span>Location</span><strong>${b.location || '-'}</strong></div>
+              <div class="admin-booking-item"><span>Room</span><strong>${b.room || '-'}</strong></div>
+            </div>
+            <div class="admin-booking-actions">
+              <span class="pop-badge ${b.popStatus === 'Uploaded' ? 'pop-uploaded' : 'pop-pending'}" onclick="viewPOPForAdmin('${b.popFileId || b.id}', '${b.id}')">${b.popStatus || 'Pending'} ${b.popStatus === 'Uploaded' ? '📥 Download' : ''}</span>
+              <button onclick="cancelBooking('${b.id}')" class="btn-danger">Cancel</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `).join('');
+  }
+  
   async function loadAdminPanel() {
     if (!isAdminLogged) return;
-    const bookings = await fetchBookings();
+    const bookings = (await fetchBookings()).sort((a, b) => {
+      const dateCompare = (a.date || '').localeCompare(b.date || '');
+      if (dateCompare !== 0) return dateCompare;
+      const timeCompare = compareTimeStrings(a.timeSlot || '', b.timeSlot || '');
+      if (timeCompare !== 0) return timeCompare;
+      return (a.fullName || '').localeCompare(b.fullName || '');
+    });
     const users = await fetchUsers();
     const orders = await fetchProductOrders();
     const today = new Date().toISOString().split('T')[0];
@@ -1547,8 +1683,8 @@
     if(revenueChart) revenueChart.destroy();
     revenueChart = new Chart(document.getElementById('revenueChart'), { type: 'line', data: { labels: bookings.map((_,i)=>i+1), datasets: [{ label: 'Revenue', data: revenueData, borderColor: '#C68E3C', fill: false }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: 'white' } } } } });
     
-    document.getElementById('adminBookingsList').innerHTML = bookings.map(b => `<tr><td style="padding:12px;">${b.fullName}</td><td style="padding:12px;">${b.service}</td><td style="padding:12px;">${b.barber}</td><td style="padding:12px;">${b.date}</td><td style="padding:12px;">${b.timeSlot}</td><td style="padding:12px;">R${b.totalAmount||0}</td><td style="padding:12px;">${b.paymentMethod || 'Not specified'}</td><td style="padding:12px;"><span class="pop-badge ${b.popStatus === 'Uploaded' ? 'pop-uploaded' : 'pop-pending'}" onclick="viewPOPForAdmin('${b.popFileId || b.id}', '${b.id}')">${b.popStatus || 'Pending'} ${b.popStatus === 'Uploaded' ? '📥 Download' : ''}</span></td><td style="padding:12px;"><button onclick="cancelBooking('${b.id}')" class="btn-danger">Cancel</button></td>`).join('') || '<tr><td colspan="9">No bookings</td>';
-    
+    renderGroupedAdminBookings(bookings);
+
     document.getElementById('adminOrdersList').innerHTML = orders.map(o => `<tr><td style="padding:12px;">${o.fullName}</td><td style="padding:12px;">${o.email}</td><td style="padding:12px;">${o.items.map(i=>i.name).join(', ')}</td><td style="padding:12px;">R${o.totalAmount}</td><td style="padding:12px;">${o.paymentMethod || 'Not specified'}</td><td style="padding:12px;"><span class="pop-badge ${o.popStatus === 'Uploaded' ? 'pop-uploaded' : 'pop-pending'}" onclick="viewPOPForAdmin('${o.popFileId || o.id}', '${o.id}')">${o.popStatus || 'Pending'} ${o.popStatus === 'Uploaded' ? '📥 Download' : ''}</span></td><td style="padding:12px;">${new Date(o.createdAt).toLocaleDateString()}</td>`).join('') || '<tr><td colspan="7">No orders</td>';
     
     document.getElementById('adminUsersList').innerHTML = users.map(u => `<tr><td style="padding:12px;">${u.fullName}</td><td style="padding:12px;">${u.email}</td><td style="padding:12px;">${u.membership || 'Silver'}</td><td style="padding:12px;">${u.totalBookings || 0}</td><td style="padding:12px;">${u.residence || u.campus || '-'}</td><td style="padding:12px;">${u.roomNumber || '-'}</td>`).join('') || '<tr><td colspan="6">No users</td>';
